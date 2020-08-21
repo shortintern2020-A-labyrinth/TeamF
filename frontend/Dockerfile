@@ -10,6 +10,6 @@ ENV TZ=Asia/Tokyo
 ENV NODE_ENV=development
 ENV HOST 0.0.0.0
 
-RUN yarn install
+RUN cd app && yarn install
 
 EXPOSE 3000
