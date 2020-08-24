@@ -20,9 +20,9 @@ class TravelNote(db.Model):
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
       db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
-  travel_detail = db.relationship('TravelDetail', backref='travel_notes', cascade="all")
-  travel_like = db.relationship('TravelLike', backref='travel_notes', cascade="all")
-  comment = db.relationship('Comment', backref='travel_notes', cascade="all")
+  travel_details = db.relationship('TravelDetail', backref='travel_notes', cascade="all")
+  travel_likes = db.relationship('TravelLike', backref='travel_notes', cascade="all")
+  comments = db.relationship('Comment', backref='travel_notes', cascade="all")
 
   def __init__(self, user_id, title, created_by, modified_by, description=None, country=None, city=None, start_date=None, end_date=None):
     self.user_id = user_id

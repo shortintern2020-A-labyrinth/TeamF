@@ -18,11 +18,11 @@ class User(db.Model):
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
       db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
-  travel_note = db.relationship('TravelNote', backref='users', cascade="all")
-  travel_like = db.relationship('TravelLike', backref='users', cascade="all")
-  comment = db.relationship('Comment', backref='users', cascade="all")
-  comment_like = db.relationship('CommentLike', backref='users', cascade="all")
-  direct_message = db.relationship('DirectMessage', backref='users', cascade="all")
+  travel_notes = db.relationship('TravelNote', backref='users', cascade="all")
+  travel_likes = db.relationship('TravelLike', backref='users', cascade="all")
+  comments = db.relationship('Comment', backref='users', cascade="all")
+  comment_likes = db.relationship('CommentLike', backref='users', cascade="all")
+  direct_messages = db.relationship('DirectMessage', backref='users', cascade="all")
 
   def __init__(self, provider, token, user_name, created_by, modified_by, email=None):
     self.provider = provider

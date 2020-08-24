@@ -18,7 +18,7 @@ class TravelDetail(db.Model):
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
       db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
-  travel_detail = db.relationship('TravelDetailImage', backref='travel_details', cascade="all")
+  travel_detail_images = db.relationship('TravelDetailImage', backref='travel_details', cascade="all")
 
 
   def __init__(self, travel_notes_id, created_by, modified_by, place=None, description=None, hotel_no=None, lat=None, lng=None):

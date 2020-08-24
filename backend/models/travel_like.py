@@ -14,8 +14,8 @@ class TravelLike(db.Model):
     modified_by = db.Column(db.String(255), nullable=False)
     modified_date = db.Column(
         db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
-    travel_detail = db.relationship(
-        'TravelDetail', backref='travel_details', cascade="all")
+    travel_details = db.relationship(
+        'TravelDetail', backref='travel_like', cascade="all")
 
     def __init__(self, user_id, travel_notes_id, created_by, modified_by):
         self.user_id = user_id
