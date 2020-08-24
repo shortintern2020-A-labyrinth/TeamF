@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-import sys
 
 db = SQLAlchemy()
 
@@ -13,7 +12,7 @@ def test_connection():
   try:
     db.session.execute('SELECT 1')
   except Exception as e:
-      output = str(e)
-      ok = False
+    output = str(e)
+    ok = False
 
   return ok, output
