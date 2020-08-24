@@ -1,3 +1,4 @@
 flask
 pymysql
 flask-sqlalchemy
+flask-migrate
