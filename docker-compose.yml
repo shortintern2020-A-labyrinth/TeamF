@@ -31,7 +31,7 @@ services:
       APP_DATABASE_PASSWORD: root
       FLASK_ENV: development
       TZ: Asia/Tokyo
-    command: flask run --host 0.0.0.0 --port 4000
+    command: sh -c "./wait-for-it.sh db:3306 -- ./start.sh"
     depends_on:
       - db
 
