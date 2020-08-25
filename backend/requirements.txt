@@ -4,3 +4,5 @@ flask-sqlalchemy
 flask-migrate
 flask_jwt_extended
 bcrypt
+pytest
+flask_testing

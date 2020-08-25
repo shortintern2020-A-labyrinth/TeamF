@@ -9,7 +9,7 @@ class Comment(db.Model):
       'travel_notes.id', ondelete="cascade", onupdate="cascade"), nullable=False)
   user_id = db.Column(db.Integer, db.ForeignKey(
       'users.id', ondelete="cascade", onupdate="cascade"), nullable=False)
-  body = db.Column(db.String(65535), nullable=False)
+  body = db.Column(db.String(4095), nullable=False)
   created_by = db.Column(db.String(255), nullable=False)
   created_date = db.Column(
       db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
