@@ -4,6 +4,7 @@ import datetime
 from flask import Flask, jsonify
 from .database import init_db, test_connection
 from .models import *
+from .blueprints import *
 
 app=Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -16,6 +17,11 @@ handler.setFormatter(logging.Formatter(
     '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
 logger = logging.getLogger('app')
 logger.addHandler(handler)
+
+# travel_note周りの実装
+app.register_blueprint(travel_note, url_prefix="/")
+# user周りの実装
+app.register_blueprint(user, url_prefix="/")
 
 init_db(app)
 
