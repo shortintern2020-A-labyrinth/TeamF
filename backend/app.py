@@ -10,6 +10,7 @@ from .blueprints import *
 app=Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config.from_object('app.config.Config')
+# 各々の環境で変える
 app.config['JWT_SECRET_KEY'] = 'aqwsedrftgyhujkil'
 jwt = JWTManager(app)
 
