@@ -30,12 +30,19 @@ def signup():
   if user:
     return jsonify( {"mode": "signup", "status": "badrequest", "message": "This email cannot be used"} ), 400
   else:
-    salt = bcrypt.gensalt(rounds=10, prefix=b"2a")
-    hashed_pass = bcrypt.hashpw(password.encode(), salt).decode()
-    user = User(email=email, password=hashed_pass, provider="email", user_name=user_name, created_by=user_name, modified_by=user_name)
-    db.session.add(user)
-    db.session.commit()
-    access_token = create_access_token(identity=user.id)
+    try:
+      salt = bcrypt.gensalt(rounds=10, prefix=b"2a")
+      hashed_pass = bcrypt.hashpw(password.encode(), salt).decode()
+      user = User(email=email, password=hashed_pass, provider="email", user_name=user_name, created_by=user_name, modified_by=user_name)
+      db.session.add(user)
+      db.session.commit()
+      access_token = create_access_token(identity=user.id)
+    except Exception as e:
+      logger.warn(e)
+      db.session.rollback()
+      return jsonify({"mode": "signup", "status": "internal_server_error", "message": "Internal server error"}), 500
+    finally:
+      db.session.close()
     return jsonify(access_token=access_token), 201
 
 @auth.route("/signin", methods=["POST"])
@@ -56,7 +63,10 @@ def signin():
     if not bcrypt.checkpw(password.encode(), user.password.encode()):
       return jsonify( {"message": "Bad username or password"} ), 401
   except Exception as e:
-    return jsonify( {"message": "An error occurred"} ), 500
+    logger.warn(e)
+    return jsonify({"mode": "signin", "status": "internal_server_error", "message": "Internal server error"}), 500
+  finally:
+    db.session.close()
 
   access_token = create_access_token(identity=user.id)
   return jsonify(access_token=access_token), 200
