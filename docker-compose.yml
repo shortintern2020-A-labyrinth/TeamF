@@ -55,7 +55,7 @@ services:
 
   test_db:
     image: mysql:5.7
-    container_name: "mysql"
+    container_name: "mysql-test"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: travel-notes
