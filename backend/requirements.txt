@@ -2,3 +2,5 @@ flask
 pymysql
 flask-sqlalchemy
 flask-migrate
+flask_jwt_extended
+bcrypt
