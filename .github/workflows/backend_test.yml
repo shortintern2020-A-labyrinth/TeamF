@@ -36,6 +36,7 @@ jobs:
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
       - name: pip install
         run: |
+          cd backend
           pip install -r requirements.txt
       - name: migration
         run: |
