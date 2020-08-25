@@ -7,6 +7,7 @@ from app.database import db, init_db
 
 class BaseTestCase(TestCase):
   def create_app(self):
+    app.config['TESTING'] = True
     app.config.from_object('app.config.TestConfig')
     return app
 
