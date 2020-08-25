@@ -1,3 +1,4 @@
+// Author: Satoshi Moro
 import React from 'react';
 import { Avatar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';

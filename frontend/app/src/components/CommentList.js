@@ -1,3 +1,4 @@
+// Author: Satoshi Moro
 import React from 'react';
 import Comment from './Comment';
 
