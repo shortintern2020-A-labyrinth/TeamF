@@ -16,8 +16,12 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       APP_DATABASE_HOST: 127.0.0.1
+      TEST_DATABASE_HOST: test_db
+      APP_DATABASE_NAME: travel-notes
       APP_DATABASE_USER: root
       APP_DATABASE_PASSWORD: root
+      FLASK_ENV: development
+      TZ: Asia/Tokyo
     services:
       db:
         image: mysql:5.7.27
