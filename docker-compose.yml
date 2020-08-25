@@ -66,4 +66,4 @@ services:
       - "./db/test_data:/var/lib/mysql"
       - "./db/my.cnf:/etc/mysql/conf.d/my.cnf"
     ports:
-      - "3306:3306"
+      - "3307:3306"
