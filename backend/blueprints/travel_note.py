@@ -23,64 +23,131 @@ def index():
 def get_image_from_b64(b64_string):
   [header, body] = b64_string.split(',')
   [head, _] = header.split(';')
-  [_, types] = head.split(':')
-  [image, extention] = types.split('/')
-  return body, extention
+  [_, types_extention] = head.split(':')
+  [types, extention] = types_extention.split('/')
+  return body, types, extention
+
 
 def save_image(b64_string, file_name):
   with open(file_name, "wb") as f:
       f.write(base64.decodebytes(str.encode(b64_string)))
 
+
+def insert_travel_details(travel_note_id, user_id, user_name, travel_details):
+  #insert_travel_details
+  travel_details_to_insert = []
+  for travel_detail in travel_details:
+    place = travel_detail.get("place", None)
+    lat = travel_detail.get("lat", None)
+    lng = travel_detail.get("lng", None)
+    description = travel_detail.get("description", None)
+    hotel_no = travel_detail.get("hotel_no", None)
+    travel_details_to_insert.append(TravelDetail(
+      travel_note_id, user_name, user_name, place, description, hotel_no, lat, lng))
+
+  try:
+    db.session.add_all(travel_details_to_insert)
+    db.session.flush()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    raise e
+
+  #save images
+  try:
+    for i in range(len(travel_details_to_insert)):
+      images = travel_details[i].get("images", [])
+      insert_travel_images(
+          travel_details_to_insert[i].id, user_name, images)
+  except Exception as e:
+    logger.warn(e)
+    raise e
+
+
+def insert_travel_images(travel_detail_id, user_name, travel_images):
+  #insert travel_images and save images to disk
+  travel_images_to_insert = []
+  for i in range(len(travel_images)):
+    b64_string, extention = get_image_from_b64(travel_images[i])
+    path = f"/app/images/detail_{travel_detail_id}_{i}.{extention}"
+    travel_images_to_insert.append(TravelDetailImage(
+      travel_detail_id, path, user_name, user_name))
+    try:
+      save_image(b64_string, path)
+    except Exception as e:
+      logger.warn(e)
+      raise e
+
+  try:
+    db.session.add_all(travel_images_to_insert)
+    db.session.flush()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    raise e
+
 @travel_note.route('/travel_note/create', methods=["POST"])
 @jwt_required
 def create():
-    if request.json is None:
-        return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "Please send json format"}), 400
+  if request.json is None:
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "Please send json format"}), 400
 
-    if "title" not in request.json:
-        return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
-    if "image" not in request.json:
-        return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
+  if "title" not in request.json:
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
+  if "image" not in request.json:
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
 
-    # ログイン機能がついてから実装する
-    user_id = get_jwt_identity()
-    try:
-        user_name = User.query.with_entities(
-            User.user_name).filter(User.id == user_id).one()
-    except Exception as e:
-        logger.warn(e)
-        return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+  b64_string, types, extention = get_image_from_b64(request.json["image"])
+  if types != "image":
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
 
-    title = request.json["title"]
-    image = request.json["image"]
-    description = request.json.get("description", "")
-    country = request.json.get("country", None)
-    city = request.json.get("city", None)
-    start_date = request.json.get("start_date", None)
-    end_date = request.json.get("end_date", None)
+  # get user_name
+  user_id = get_jwt_identity()
+  try:
+    (user_name,) = User.query.with_entities(
+        User.user_name).filter(User.id == user_id).one()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
 
-    travel_details = request.json.get("travel_details", [])
+  # get_parameters
+  title = request.json["title"]
+  image = request.json["image"]
+  description = request.json.get("description", "")
+  country = request.json.get("country", None)
+  city = request.json.get("city", None)
+  start_date = request.json.get("start_date", None)
+  end_date = request.json.get("end_date", None)
 
-    image_path = ""
-    travel_note = TravelNote(user_id, title, image_path, user_name[0], user_name[0],
-                             description, country, city, start_date, end_date)
-    try:
-        db.session.add(travel_note)
-        db.session.commit()
-    except Exception as e:
-        logger.warn(e)
-        db.session.rollback()
-        return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+  travel_details = request.json.get("travel_details", [])
 
-    b64_string, extention = get_image_from_b64(image)
-    image_path = f"/app/images/thumbnail_{travel_note.id}.{extention}"
-    try:
-      save_image(b64_string, image_path)
-      travel_note.image_path = image_path
-      db.session.commit()
-    except Exception as e:
-        logger.warn(e)
-        db.session.rollback()
-        return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+  #insert TravelNote
+  image_path = ""
+  travel_note = TravelNote(user_id, title, image_path, user_name, user_name,
+                            description, country, city, start_date, end_date)
+  try:
+    db.session.add(travel_note)
+    db.session.flush()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
 
-    return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 200
+  #save thumbnail
+  b64_string, _, extention = get_image_from_b64(image)
+  image_path = f"/app/images/thumbnail_{travel_note.id}.{extention}"
+  try:
+    save_image(b64_string, image_path)
+    travel_note.image_path = image_path
+    #insert travel_details
+    insert_travel_details(travel_note.id, user_id,
+                          user_name, travel_details)
+    db.session.commit()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+  finally:
+    db.session.close()
+
+  return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 200
