@@ -164,3 +164,56 @@ def create():
     db.session.close()
 
   return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 201
+@travel_note.route('/travel_notes', methods=["GET"])
+def get_all():
+  place = request.args.get("place", default=None, type=str)
+  start_date = request.args.get("start_date", default=None, type=int)
+  end_date = request.args.get("end_date", default=None, type=int)
+  limit = request.args.get("limit", default=None, type=int)
+  offset = request.args.get("offset", default=None, type=int)
+  logger.warn(limit)
+
+  if (start_date is not None) and (end_date is not None) and end_date < start_date:
+    return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
+
+  try:
+    query = TravelNote.query.order_by(TravelNote.id.desc())
+    if place is not None:
+      query = query.filter(TravelNote.place == place)
+
+    if (start_date is not None) and (end_date is not None):
+      query = query.filter(TravelNote.start_date.between(start_date, end_date))
+
+    if offset is not None:
+      query = query.offset(offset)
+
+    if limit is not None:
+      query = query.limit(limit)
+
+    
+    travel_notes = query.all()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_notes", "status": "internal_server_error", "message": "Internal server error"}), 500
+  
+  ret = []
+  for travel_note in travel_notes:
+    obj = {
+      "id": travel_note.id,
+      "title": travel_note.title,
+      "description": travel_note.description,
+      "country": travel_note.country,
+      "city": travel_note.city,
+      "start_date": travel_note.start_date,
+      "end_date": travel_note.end_date
+    }
+
+    image_path = travel_note.image_path
+    with open(image_path, "rb") as f:
+      img_binary = f.read()
+      b64_binary = base64.b64encode(img_binary)
+      b64_string = b64_binary.decode('utf-8')
+      obj["image"] = b64_string
+    ret.append(obj)
+
+  return jsonify(ret), 200
