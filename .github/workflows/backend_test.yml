@@ -48,7 +48,9 @@ jobs:
       - name: migration
         run: |
           cd backend/app
-          ./start.sh
+          flask db init
+          flask db migrate
+          flask db upgrade
       - name: run test
         run: |
           cd backend/app
