@@ -1,4 +1,5 @@
 # shintaro ichikawa
+# cannot remove saved image when commit was failed
 from app.database import db
 from app.models import TravelNote, User, TravelDetail, TravelDetailImage
 from flask import jsonify, Blueprint, request
@@ -50,7 +51,6 @@ def insert_travel_details(travel_note_id, user_id, user_name, travel_details):
     db.session.flush()
   except Exception as e:
     logger.warn(e)
-    db.session.rollback()
     raise e
 
   #save images
@@ -68,7 +68,7 @@ def insert_travel_images(travel_detail_id, user_name, travel_images):
   #insert travel_images and save images to disk
   travel_images_to_insert = []
   for i in range(len(travel_images)):
-    b64_string, extention = get_image_from_b64(travel_images[i])
+    b64_string, _, extention = get_image_from_b64(travel_images[i])
     path = f"/app/images/detail_{travel_detail_id}_{i}.{extention}"
     travel_images_to_insert.append(TravelDetailImage(
       travel_detail_id, path, user_name, user_name))
@@ -83,8 +83,18 @@ def insert_travel_images(travel_detail_id, user_name, travel_images):
     db.session.flush()
   except Exception as e:
     logger.warn(e)
-    db.session.rollback()
     raise e
+
+def validate_travel_details(travel_details):
+  for travel_detail in travel_details:
+    images = travel_detail.get("images", [])
+    for image in images:
+      b64_string, types, extention = get_image_from_b64(image)
+      if types != "image":
+        return False
+  
+  return True
+
 
 @travel_note.route('/travel_note/create', methods=["POST"])
 @jwt_required
@@ -101,15 +111,6 @@ def create():
   if types != "image":
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
 
-  # get user_name
-  user_id = get_jwt_identity()
-  try:
-    (user_name,) = User.query.with_entities(
-        User.user_name).filter(User.id == user_id).one()
-  except Exception as e:
-    logger.warn(e)
-    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
-
   # get_parameters
   title = request.json["title"]
   image = request.json["image"]
@@ -121,6 +122,19 @@ def create():
 
   travel_details = request.json.get("travel_details", [])
 
+  if not validate_travel_details(travel_details):
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400    
+
+
+  # get user_name
+  user_id = get_jwt_identity()
+  try:
+    (user_name,) = User.query.with_entities(
+        User.user_name).filter(User.id == user_id).one()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+
   #insert TravelNote
   image_path = ""
   travel_note = TravelNote(user_id, title, image_path, user_name, user_name,
@@ -130,7 +144,6 @@ def create():
     db.session.flush()
   except Exception as e:
     logger.warn(e)
-    db.session.rollback()
     return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
 
   #save thumbnail
