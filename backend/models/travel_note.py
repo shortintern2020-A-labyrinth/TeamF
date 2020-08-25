@@ -24,9 +24,10 @@ class TravelNote(db.Model):
   travel_likes = db.relationship('TravelLike', backref='travel_notes', cascade="all")
   comments = db.relationship('Comment', backref='travel_notes', cascade="all")
 
-  def __init__(self, user_id, title, created_by, modified_by, description=None, country=None, city=None, start_date=None, end_date=None):
+  def __init__(self, user_id, title, image_path, created_by, modified_by, description=None, country=None, city=None, start_date=None, end_date=None):
     self.user_id = user_id
     self.title = title
+    self.image_path = image_path
     self.created_by = created_by
     self.modified_by = modified_by
     self.description = description
