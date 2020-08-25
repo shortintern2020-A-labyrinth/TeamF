@@ -36,13 +36,16 @@ jobs:
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
       - name: pip install
         run: |
-          cd backend
+          mv backend app
+          mkdir backend
+          mv app backend
+          cd backend/app
           pip install -r requirements.txt
       - name: migration
         run: |
-          cd backend
+          cd backend/app
           ./start.sh
       - name: run test
         run: |
-          cd backend
+          cd backend/app
           pytest
