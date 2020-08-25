@@ -41,21 +41,29 @@ def signup():
 
 @auth.route("/signin", methods=["POST"])
 def signin():
-    email = request.json.get("email", None)
-    password = request.json.get("password", None)
-    if not email or not password:
-      return jsonify( {"message": "Format does not match"} ), 400
+  email = request.json.get("email", None)
+  password = request.json.get("password", None)
+  if not email or not password:
+    return jsonify( {"message": "Format does not match"} ), 400
 
-    try:
-      user = db.session.query(User).filter_by(email=email).first()
-      if not user:
-        return jsonify( {"message": "Bad username or password"} ), 401
-      if not bcrypt.checkpw(password.encode(), user.password.encode()):
-        return jsonify( {"message": "Bad username or password"} ), 401
-    except Exception as e:
-      return jsonify( {"message": "An error occurred"} ), 500
+  try:
+    user = db.session.query(User).filter_by(email=email).first()
+    if not user:
+      return jsonify( {"message": "Bad username or password"} ), 401
+    if not bcrypt.checkpw(password.encode(), user.password.encode()):
+      return jsonify( {"message": "Bad username or password"} ), 401
+  except Exception as e:
+    return jsonify( {"message": "An error occurred"} ), 500
 
-    access_token = create_access_token(identity=user.id)
-    #sql = "UPDATE users_data SET jti=%s WHERE username=%s"
-    #db(sql, [ get_jti(access_token), username ])
-    return jsonify(access_token=access_token), 200
+  access_token = create_access_token(identity=user.id)
+  #sql = "UPDATE users_data SET jti=%s WHERE username=%s"
+  #db(sql, [ get_jti(access_token), username ])
+  return jsonify(access_token=access_token), 200
+
+@auth.route("/protected", methods=["GET"])
+@jwt_required
+def protected():
+  user = db.session.query(User).filter_by(id=get_jwt_identity()).first()
+  if not user:
+      return jsonify( {"message": "Bad access token"} ), 401
+  return jsonify( {"user_id": user.id} ), 200
