@@ -5,7 +5,7 @@ from app.database import db
 class User(db.Model):
   __tablename__ = 'users'
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  provider = db.Column(db.Integer, nullable=False)
+  provider = db.Column(db.String(10), nullable=False)
   email = db.Column(db.String(255), unique=True)
   password = db.Column(db.String(255), nullable=False)
   user_name = db.Column(db.String(50), nullable=False)
