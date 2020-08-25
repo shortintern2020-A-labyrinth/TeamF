@@ -1,7 +1,7 @@
 // Author: Satoshi Moro
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, Avatar, Grid, Typography, Box, Container } from '@material-ui/core';
+import { Card, Avatar, Typography } from '@material-ui/core';
 import FlagIcon from '@material-ui/icons/Flag';
 import NoImage from '../assets/images/no_image.png';
 
