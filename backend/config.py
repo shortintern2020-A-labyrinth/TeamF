@@ -10,6 +10,7 @@ class DevelopmentConfig:
       'db_name': os.environ['APP_DATABASE_NAME']
     }
   )
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class TestConfig:
 
@@ -21,5 +22,6 @@ class TestConfig:
       'db_name': os.environ['APP_DATABASE_NAME']
     }
   )
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 Config = DevelopmentConfig
