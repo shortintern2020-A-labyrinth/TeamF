@@ -171,7 +171,6 @@ def get_all():
   end_date = request.args.get("end_date", default=None, type=int)
   limit = request.args.get("limit", default=None, type=int)
   offset = request.args.get("offset", default=None, type=int)
-  logger.warn(limit)
 
   if (start_date is not None) and (end_date is not None) and end_date < start_date:
     return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
