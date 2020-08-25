@@ -1,4 +1,4 @@
-// Editor: Kota Ikehara
+// Author: Kota Ikehara
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -28,9 +28,9 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 5),
   },
-  link:{
+  link: {
     textDecoration: 'none',
-  }
+  },
 }));
 
 export default function Login() {
@@ -78,11 +78,15 @@ export default function Login() {
             ログイン
           </Button>
           <div>
-            {/* TODO: Add reset password link*/}
-            <Link to="/" className={classes.link}>パスワードをお忘れですか？</Link>
+            {/* TODO: Add reset password link */}
+            <Link to="/" className={classes.link}>
+              パスワードをお忘れですか？
+            </Link>
           </div>
           <div>
-            <Link to="/Signup" className={classes.link}>アカウントをお持ちでない方はこちら</Link>
+            <Link to="/Signup" className={classes.link}>
+              アカウントをお持ちでない方はこちら
+            </Link>
           </div>
         </form>
         <SNSLogin />
@@ -90,3 +94,5 @@ export default function Login() {
     </Container>
   );
 }
+
+export { useStyles };
