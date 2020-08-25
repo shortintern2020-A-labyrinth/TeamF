@@ -1,7 +1,7 @@
 // Editor: Satoshi Moro
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Avatar, Grid, Typography, Box, Container } from '@material-ui/core';
+import { Button, Avatar, Grid, Typography, Box, Container, TextField } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import RoomIcon from '@material-ui/icons/Room';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
@@ -9,6 +9,8 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
 import Memory from '../components/Memory';
 import NoImage from '../assets/images/no_image.png';
+import CommentList from '../components/CommentList';
+import UserIcon from '../components/UserIcon';
 
 const useStyles = makeStyles((theme) => ({
     abstract: {
@@ -54,6 +56,15 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: '#E1306C',
         margin: theme.spacing(2),
     },
+    form: {
+        display: 'flex',
+        justifyContent: 'center',
+        width: '100%'
+    },
+    sizing: {
+
+    }
+
 }));
 
 const memories = [
@@ -94,8 +105,7 @@ export default function TravelNoteDetail() {
                             <Typography className={classes.spacing}>千葉県千葉市</Typography>
                         </Grid>
                         <Grid item xs={4} className={classes.user}>
-                            <Avatar>H</Avatar>
-                            <Typography className={classes.spacing}>takahashi</Typography>
+                            <UserIcon name={"takahashi"} />
                         </Grid>
                     </Grid>
                     <div className={classes.like}>
@@ -110,15 +120,13 @@ export default function TravelNoteDetail() {
                     <Typography variant="h6" className={classes.share}>
                         外部アカウントでシェアする
                         </Typography>
-                    {/* TODO: Add OAuth function */}
                     <Button
                         variant="contained"
                         color="primary"
                         className={classes.buttonTwitter}
                     >
-                        <TwitterIcon color="default" />
+                        <TwitterIcon />
                     </Button>
-                    {/* TODO: Add OAuth function */}
                     <Button
                         variant="contained"
                         color="primary"
@@ -127,6 +135,22 @@ export default function TravelNoteDetail() {
                         <InstagramIcon />
                     </Button>
                 </Container>
+                <Box mt={5}>
+                    <Container maxWidth="md">
+                        <div className={classes.form}>
+                            <Avatar >H</Avatar>
+                            <TextField
+                                className={classes.spacing}
+                                id="outlined-multiline-static"
+                                label="Comment here."
+                                multiline
+                                rows={4}
+                                variant="outlined"
+                            />
+                        </div>
+                        <CommentList />
+                    </Container>
+                </Box>
             </Box>
         </>
     );
