@@ -163,4 +163,4 @@ def create():
   finally:
     db.session.close()
 
-  return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 200
+  return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 201
