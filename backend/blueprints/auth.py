@@ -40,8 +40,12 @@ def signup():
 
 @auth.route("/signin", methods=["POST"])
 def signin():
+  if not request.is_json:
+    return jsonify( {"message": "Missing JSON in request"} ), 400
+    
   email = request.json.get("email", None)
   password = request.json.get("password", None)
+
   if not email or not password:
     return jsonify( {"message": "Format does not match"} ), 400
 
@@ -59,7 +63,7 @@ def signin():
 
 @auth.route("/protected", methods=["GET"])
 @jwt_required
-def protected():
+def check():
   user = db.session.query(User).filter_by(id=get_jwt_identity()).first()
   if not user:
       return jsonify( {"message": "Bad access token"} ), 401
