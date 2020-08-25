@@ -2,6 +2,7 @@ import logging
 import logging.handlers
 import datetime
 from flask import Flask, jsonify
+from flask_jwt_extended import JWTManager
 from .database import init_db, test_connection
 from .models import *
 from .blueprints import *
@@ -9,6 +10,8 @@ from .blueprints import *
 app=Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config.from_object('app.config.Config')
+app.config['JWT_SECRET_KEY'] = 'aqwsedrftgyhujkil'
+jwt = JWTManager(app)
 
 handler = logging.handlers.RotatingFileHandler(
     f"logs/log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log", "a+", maxBytes=3000, backupCount=5)

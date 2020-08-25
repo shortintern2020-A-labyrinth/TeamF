@@ -14,7 +14,6 @@ from app.models import *
 auth = Blueprint('auth', __name__)
 logger = logging.getLogger('app')
 db = SQLAlchemy()
-jwt = JWTManager(app)
 
 @auth.route("/signup", methods=["POST"])
 def signup():
@@ -37,7 +36,8 @@ def signup():
     user = User(email=email, password=hashed_pass, provider="email", user_name=user_name, created_by=user_name, modified_by=user_name)
     db.session.add(user)
     db.session.commit()
-    return jsonify( {"mode": "signup", "status": "success", "message": "Completed"} ), 200
+    access_token = create_access_token(identity=user.id)
+    return jsonify(access_token=access_token), 201
 
 @auth.route("/signin", methods=["POST"])
 def signin():
