@@ -3,28 +3,21 @@ import React, { useState, useEffect } from 'react';
 import TravelNote from '../components/TravelNote'
 import { Container, Typography, Divider, Box, IconButton } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Link } from 'react-router-dom';
 
-async function getData(endpoint = '', params = {}) {
-    const searchParams = new URLSearchParams();
-
-    for (const property in params) {
-        searchParams.set(property, params[property]);
-    }
-
-    if (params) {
-        endpoint += '?'
-    }
-
-    const url = 'http://localhost:4000' + endpoint + searchParams.toString()
-    const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
+export async function get(url = "", params = {}) {
+    // URLオブジェクトを作成
+    let queryUrl = new URL(url);
+    // クエリパラメータを追加
+    queryUrl.search = new URLSearchParams(params);
+    // GETリクエスト
+    const response = await fetch(queryUrl, {
         headers: {
-            'Content-Type': 'application/json'
-        },
+            "Content-Type": "application/json"
+        }
     });
     return response.json();
-};
+}
 
 export default function ListTravelNotes() {
 
@@ -34,7 +27,7 @@ export default function ListTravelNotes() {
     const onNextButtonClicked = () => { setOffset(offset + limit) };
 
     useEffect(() => {
-        getData('/travel_notes', { offset, limit })
+        get('http://localhost:4000/travel_notes', { offset, limit })
             .then(res => {
                 setTravelNotes(res);
             })
@@ -49,10 +42,11 @@ export default function ListTravelNotes() {
                 <Typography variant="h4" align="left" >旅行記一覧</Typography>
                 <Divider />
                 {travelNotes.map(travelNote => (
-                    <TravelNote
-                        key={travelNote.id}
-                        {...travelNote}
-                    />
+                    <Link key={travelNote.id} to={{ pathname: `/TravelNote/${travelNote.id}`, state: { travelNote } }} style={{ textDecoration: 'none' }}>
+                        <TravelNote
+                            {...travelNote}
+                        />
+                    </Link>
                 ))}
                 <IconButton aria-label="next" onClick={onNextButtonClicked}>
                     <ExpandMoreIcon />
