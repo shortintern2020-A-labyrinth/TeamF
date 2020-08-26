@@ -174,15 +174,13 @@ def create():
 
   return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 201
 
-@travel_note.route('/travel_note_details', methods=["GET"])
-def get_details():
-  travel_notes_id = request.args.get("travel_notes_id", default=None, type=int)
-
-  if travel_notes_id is None:
+@travel_note.route('/travel_note_details/<travel_note_id>', methods=["GET"])
+def get_details(travel_note_id):
+  if travel_note_id is None:
     return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
 
   try:
-    travel_note = TravelNote.query.filter(TravelNote.id == travel_notes_id).one()
+    travel_note = TravelNote.query.filter(TravelNote.id == travel_note_id).one()
     travel_details = travel_note.travel_details
   except Exception as e:
     logger.warn(e)
