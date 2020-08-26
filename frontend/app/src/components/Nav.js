@@ -77,7 +77,7 @@ export default function ButtonAppBar() {
       <AppBar position="static">
         <Toolbar className={classes.root}>
           <Typography variant="h6" noWrap>
-            <Link className={classes.title} to="/ListTravelNotes">
+            <Link className={classes.title} to="/TravelNotes">
               トラベルノーツ
             </Link>
           </Typography>

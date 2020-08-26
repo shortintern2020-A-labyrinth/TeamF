@@ -1,6 +1,6 @@
 // Editor: Kota Ikehara
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -19,14 +19,16 @@ function App() {
     <div className="App">
       <Router>
         <Nav />
-        <Route exact path="/" component={ListTravelNotes} />
+        <Route exact path="/" render={() => <Redirect to="/TravelNotes" />} />
+        <Route path="/TravelNotes" component={ListTravelNotes} />
         <Route path="/Login" component={Login} />
         <Route path="/Signup" component={Signup} />
         <Route path="/CreateTravelNote" component={CreateTravelNote} />
         <Route path="/EditTravelNote" component={EditTravelNote} />
-        <Route path="/TravelNoteDetail" component={TravelNoteDetail} />
         <Route path="/MyPage" component={MyPage} />
         <Route path="/UserPage" component={UserPage} />
+        <Route path="/TravelNote/:travel_note_id" component={TravelNoteDetail} />
+        <Redirect exact from="/" to="/TravelNotes" />
         <Box mt={8}>
           <Copyright />
         </Box>
