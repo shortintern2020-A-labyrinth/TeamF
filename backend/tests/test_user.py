@@ -86,3 +86,59 @@ class TestMyPageAPI(BaseTestCase):
     assert result["travel_countries"] == 0
     assert result["travel_likes"] == 0
     assert result["travel_notes"] == []
+
+  def test_one_travel_note(self):
+    user_id = factory_user(email="test1@test.com",password="password")
+    # sign_in
+    response1 = self.app.post(
+      '/signin',
+      data=json.dumps(dict(
+        email='test1@test.com',
+        password='password'
+      )),
+      content_type='application/json'
+    )
+    access_token = response1.json["access_token"]
+    travel_note = factory_travel_note(user_id)
+    response2 = self.app.get(
+      '/mypage',
+      headers={
+        'Authorization': f"Bearer {access_token}"
+      }
+    )
+    self.assert_status(response2, 200)
+    result = response2.json
+    assert result["travel_days"] == 3
+    assert result["travel_counts"] == 1
+    assert result["travel_countries"] == 1
+    assert result["travel_likes"] == 0
+    assert len(result["travel_notes"]) == 1
+
+  def test_multi_travel_note(self):
+    user_id = factory_user(email="test1@test.com",password="password")
+    # sign_in
+    response1 = self.app.post(
+      '/signin',
+      data=json.dumps(dict(
+        email='test1@test.com',
+        password='password'
+      )),
+      content_type='application/json'
+    )
+    access_token = response1.json["access_token"]
+    factory_travel_note(user_id,country="Japan")
+    factory_travel_note(user_id,country="Japan")
+    factory_travel_note(user_id,country="America")
+    response2 = self.app.get(
+      '/mypage',
+      headers={
+        'Authorization': f"Bearer {access_token}"
+      }
+    )
+    self.assert_status(response2, 200)
+    result = response2.json
+    assert result["travel_days"] == 9
+    assert result["travel_counts"] == 3
+    assert result["travel_countries"] == 2
+    assert result["travel_likes"] == 0
+    assert len(result["travel_notes"]) == 3
