@@ -47,13 +47,16 @@ def factory_travel_note(user_id,title="test",description="",country="Japan",city
   db.session.add(travel_note)
   db.session.flush()
   #save thumbnail
-  if os.path.exists(test_dir):
-    shutil.rmtree(test_dir)
-  os.mkdir(test_dir)
+  if not os.path.exists(test_dir):
+    os.mkdir(test_dir)
   b64_string, _, extention = get_image_from_b64("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=")
   image_path = f"{test_dir}/thumbnail_{travel_note.id}.{extention}"
   save_image(b64_string, image_path)
   travel_note.image_path = image_path
-  db.session.commit()
-  db.session.close()
-  return travel_note
+  try:
+    db.session.commit()
+    return travel_note.id
+  except Exception as e:
+    logger.warn(e)
+  finally:
+    db.session.close()
