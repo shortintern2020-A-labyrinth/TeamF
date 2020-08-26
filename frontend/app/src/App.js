@@ -19,7 +19,7 @@ function App() {
     <div className="App">
       <Router>
         <Nav />
-        <Route exact path="/ListTravelNotes" component={ListTravelNotes} />
+        <Route exact path="/" component={ListTravelNotes} />
         <Route path="/Login" component={Login} />
         <Route path="/Signup" component={Signup} />
         <Route path="/CreateTravelNote" component={CreateTravelNote} />
