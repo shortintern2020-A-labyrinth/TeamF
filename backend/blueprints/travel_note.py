@@ -1,7 +1,7 @@
 # shintaro ichikawa
 
 from app.database import db
-from app.models import TravelNote, User, TravelDetail, TravelDetailImage
+from app.models import TravelNote, User, TravelDetail, TravelDetailImage, TravelLike
 from flask import jsonify, Blueprint, request
 import logging
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -278,3 +278,98 @@ def get_all():
     ret.append(obj)
 
   return jsonify(ret), 200
+
+@travel_note.route('/travel_note/<travel_note_id>/like', methods=["POST"])
+@jwt_required
+def like(travel_note_id):
+  if travel_note_id is None:
+    return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "bad_request", "message": "There are invalid parameters"}), 400
+
+  # check travel note exists
+  try:
+    exists = TravelNote.query.get(travel_note_id)
+    if not exists:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "bad_request", "message": "Such travel note does not exist"}), 404
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # get user_name
+  user_id = get_jwt_identity()
+  try:
+    (user_name,) = User.query.with_entities(
+        User.user_name).filter(User.id == user_id).one()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # check travel like exists
+  try:
+    exists = TravelLike.query.get((user_id, travel_note_id))
+    if exists:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "bad_request", "message": "Already liked"}), 400
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+
+  travel_like = TravelLike(user_id, travel_note_id, user_name, user_name)
+
+  try:
+    db.session.add(travel_like)
+    db.session.commit()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+  finally:
+    db.session.close()
+
+  return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "ok", "message": "Successfully liked"}), 200
+
+
+@travel_note.route('/travel_note/<travel_note_id>/like/delete', methods=["POST"])
+@jwt_required
+def like_delete(travel_note_id):
+  if travel_note_id is None:
+    return jsonify({"mode": "travel_note/<travel_note_id>/like/delete", "status": "bad_request", "message": "There are invalid parameters"}), 400
+
+  # check travel note exists
+  try:
+    exists = TravelNote.query.get(travel_note_id)
+    if not exists:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "bad_request", "message": "Such travel note does not exist"}), 404
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # get user_name
+  user_id = get_jwt_identity()
+  try:
+    (user_name,) = User.query.with_entities(
+        User.user_name).filter(User.id == user_id).one()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # check travel like exists
+  try:
+    travel_like = TravelLike.query.get((user_id, travel_note_id))
+    if not travel_like:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "bad_request", "message": "Not already liked"}), 400
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+
+  try:
+    db.session.delete(travel_like)
+    db.session.commit()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    return jsonify({"mode": "travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+  finally:
+    db.session.close()
+
+  return jsonify({}),204
