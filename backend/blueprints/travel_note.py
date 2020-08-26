@@ -33,6 +33,15 @@ def save_image(b64_string, file_name):
   with open(file_name, "wb") as f:
       f.write(base64.decodebytes(str.encode(b64_string)))
 
+def load_image(path):
+  extention = path.split('.', 1)[1]
+  ret = f"data:image/{extention};base64,"
+  with open(path, "rb") as f:
+    img_binary = f.read()
+    b64_binary = base64.b64encode(img_binary)
+    b64_string = b64_binary.decode('utf-8')
+    ret += b64_string
+  return ret
 
 def insert_travel_details(travel_note_id, user_id, user_name, travel_details):
   #insert_travel_details
@@ -164,6 +173,42 @@ def create():
     db.session.close()
 
   return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 201
+
+@travel_note.route('/travel_note_details', methods=["GET"])
+def get_details():
+  travel_notes_id = request.args.get("travel_notes_id", default=None, type=int)
+
+  if travel_notes_id is None:
+    return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
+
+  try:
+    travel_note = TravelNote.query.filter(TravelNote.id == travel_notes_id).one()
+    travel_details = travel_note.travel_details
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_notes", "status": "internal_server_error", "message": "Internal server error"}), 500
+  
+  ret = []
+  for travel_detail in travel_details:
+    obj = {
+      "place": travel_detail.place,
+      "lat": travel_detail.lat,
+      "lng": travel_detail.lng,
+      "description": travel_detail.description,
+    }
+
+    image_objects = travel_detail.travel_detail_images
+    images = []
+    for image_object in image_objects:
+      image_path = image_object.path
+      image = load_image(image_path)
+      images.append(image)
+
+    obj["images"] = images
+    ret.append(obj)
+
+  return jsonify(ret), 200
+
 @travel_note.route('/travel_notes', methods=["GET"])
 def get_all():
   place = request.args.get("place", default=None, type=str)
