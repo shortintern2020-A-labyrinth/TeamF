@@ -174,7 +174,7 @@ def create():
 
   return jsonify({"mode": "travel_note/create", "status": "ok", "message": "Successfully created"}), 201
 
-@travel_note.route('/travel_note_details/<travel_note_id>', methods=["GET"])
+@travel_note.route('/travel_note/<travel_note_id>', methods=["GET"])
 def get_details(travel_note_id):
   if travel_note_id is None:
     return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
