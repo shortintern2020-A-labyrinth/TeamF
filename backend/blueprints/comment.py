@@ -61,9 +61,9 @@ def create(travel_note_id):
     db.session.commit()
   except Exception as e:
     logger.warn(e)
-    return jsonify({"mode": "comment/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+    return jsonify({"mode": "/travel_note/<travel_note_id>/cooment/create", "status": "internal_server_error", "message": "Internal server error"}), 500
   finally:
     db.session.close()
 
-  return jsonify({"mode": "comment/create", "status": "create", "message": "Successfully created"}), 201
+  return jsonify({"mode": "/travel_note/<travel_note_id>/cooment/create", "status": "create", "message": "Successfully created"}), 201
 
