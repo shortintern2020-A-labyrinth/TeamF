@@ -253,11 +253,8 @@ def get_all():
     }
 
     image_path = travel_note.image_path
-    with open(image_path, "rb") as f:
-      img_binary = f.read()
-      b64_binary = base64.b64encode(img_binary)
-      b64_string = b64_binary.decode('utf-8')
-      obj["image"] = b64_string
+    image = load_image(image_path)
+    obj["image"] = image
     ret.append(obj)
 
   return jsonify(ret), 200
