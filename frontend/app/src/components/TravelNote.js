@@ -31,8 +31,6 @@ const useStyles = makeStyles((theme) => ({
 export default function TravelNote({ title, description, image, country, city, start_date, end_date }) {
     const classes = useStyles();
 
-    image = image ? 'data:image/png;base64,' + image : image;
-
     return (
         <div className={classes.root}>
             <Card className={classes.card} m={2}>
