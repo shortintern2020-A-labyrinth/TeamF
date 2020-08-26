@@ -70,16 +70,16 @@ def create(travel_note_id):
 @comment.route('/travel_note/<travel_note_id>/comments', methods=["GET"])
 def get_all_comments(travel_note_id):
   if "travel_note_id" is None:
-    return jsonify({"mode": "/travel_note/<travel_note_id>/cooments", "status": "bad_request", "message": "There are invalid parameters"}), 400
+    return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "bad_request", "message": "There are invalid parameters"}), 400
 
   # check travel note exists
   try:
     travel_note = TravelNote.query.get(travel_note_id)
     if not travel_note:
-      return jsonify({"mode": "/travel_note/<travel_note_id>/cooments", "status": "bad_request", "message": "Such travel note does not exist"}), 400
+      return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "bad_request", "message": "Such travel note does not exist"}), 400
   except Exception as e:
     logger.warn(e)
-    return jsonify({"mode": "/travel_note/<travel_note_id>/cooments", "status": "internal_server_error", "message": "Internal server error"}), 500
+    return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "internal_server_error", "message": "Internal server error"}), 500
 
   comments = []
   for comment in travel_note.comments:
@@ -88,7 +88,7 @@ def get_all_comments(travel_note_id):
       "body": comment.body,
       "likes": len(comment.comment_likes)
     })
-    
+
   return jsonify({
     "comments": comments
   }), 200
