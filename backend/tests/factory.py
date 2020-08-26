@@ -10,7 +10,7 @@ import os
 import glob
 import shutil
 
-test_dir = "/app/images/test"
+test_dir = "./images/test"
 
 def get_image_from_b64(b64_string):
   [header, body] = b64_string.split(',')
