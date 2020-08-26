@@ -1,15 +1,20 @@
 # shintaro ichikawa
-# cannot remove saved image when commit was failed
+
 from app.database import db
-from app.models import TravelNote, User, TravelDetail, TravelDetailImage
+from app.models import TravelNote, User, TravelDetail, TravelDetailImage, TravelLike
 from flask import jsonify, Blueprint, request
 import logging
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import base64
+import os
+import glob
+import shutil
 
 travel_note = Blueprint('travel_note', __name__)
 logger = logging.getLogger('app')
 
+tmp_dir = "/app/images/tmp"
+images_dir = "/app/images"
 
 @travel_note.route('/travel_note/test')
 def index():
@@ -42,6 +47,13 @@ def load_image(path):
     b64_string = b64_binary.decode('utf-8')
     ret += b64_string
   return ret
+
+def move_image():
+  tmp = f"{tmp_dir}/*"
+  files = glob.glob(tmp)
+  for f in files:
+    shutil.move(f, images_dir)
+
 
 def insert_travel_details(travel_note_id, user_id, user_name, travel_details):
   #insert_travel_details
@@ -78,11 +90,12 @@ def insert_travel_images(travel_detail_id, user_name, travel_images):
   travel_images_to_insert = []
   for i in range(len(travel_images)):
     b64_string, _, extention = get_image_from_b64(travel_images[i])
-    path = f"/app/images/detail_{travel_detail_id}_{i}.{extention}"
+    tmp_path = f"{tmp_dir}/detail_{travel_detail_id}_{i}.{extention}"
+    img_path = f"{images_dir}/detail_{travel_detail_id}_{i}.{extention}"
     travel_images_to_insert.append(TravelDetailImage(
-      travel_detail_id, path, user_name, user_name))
+      travel_detail_id, img_path, user_name, user_name))
     try:
-      save_image(b64_string, path)
+      save_image(b64_string, tmp_path)
     except Exception as e:
       logger.warn(e)
       raise e
@@ -148,6 +161,11 @@ def create():
   image_path = ""
   travel_note = TravelNote(user_id, title, image_path, user_name, user_name,
                             description, country, city, start_date, end_date)
+
+  if os.path.exists(tmp_dir):
+    shutil.rmtree(tmp_dir)
+  os.mkdir(tmp_dir)
+
   try:
     db.session.add(travel_note)
     db.session.flush()
@@ -157,14 +175,16 @@ def create():
 
   #save thumbnail
   b64_string, _, extention = get_image_from_b64(image)
-  image_path = f"/app/images/thumbnail_{travel_note.id}.{extention}"
+  tmp_path = f"{tmp_dir}/thumbnail_{travel_note.id}.{extention}"
+  image_path = f"{images_dir}/thumbnail_{travel_note.id}.{extention}"
   try:
-    save_image(b64_string, image_path)
+    save_image(b64_string, tmp_path)
     travel_note.image_path = image_path
     #insert travel_details
     insert_travel_details(travel_note.id, user_id,
                           user_name, travel_details)
     db.session.commit()
+    move_image()
   except Exception as e:
     logger.warn(e)
     db.session.rollback()
@@ -240,14 +260,16 @@ def get_all():
   
   ret = []
   for travel_note in travel_notes:
+    likes = len(travel_note.travel_likes)
     obj = {
       "id": travel_note.id,
       "title": travel_note.title,
       "description": travel_note.description,
       "country": travel_note.country,
       "city": travel_note.city,
-      "start_date": travel_note.start_date,
-      "end_date": travel_note.end_date
+      "start_date": travel_note.start_date.strftime("%Y年%m月%d日"),
+      "end_date": travel_note.end_date.strftime("%Y年%m月%d日"),
+      "likes": likes
     }
 
     image_path = travel_note.image_path
@@ -256,3 +278,98 @@ def get_all():
     ret.append(obj)
 
   return jsonify(ret), 200
+
+@travel_note.route('/travel_note/<travel_note_id>/like', methods=["POST"])
+@jwt_required
+def like(travel_note_id):
+  if travel_note_id is None:
+    return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "bad_request", "message": "There are invalid parameters"}), 400
+
+  # check travel note exists
+  try:
+    exists = TravelNote.query.get(travel_note_id)
+    if not exists:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "bad_request", "message": "Such travel note does not exist"}), 404
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # get user_name
+  user_id = get_jwt_identity()
+  try:
+    (user_name,) = User.query.with_entities(
+        User.user_name).filter(User.id == user_id).one()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # check travel like exists
+  try:
+    exists = TravelLike.query.get((user_id, travel_note_id))
+    if exists:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "bad_request", "message": "Already liked"}), 400
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+
+  travel_like = TravelLike(user_id, travel_note_id, user_name, user_name)
+
+  try:
+    db.session.add(travel_like)
+    db.session.commit()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "internal_server_error", "message": "Internal server error"}), 500
+  finally:
+    db.session.close()
+
+  return jsonify({"mode": "travel_note/<travel_note_id>/like", "status": "ok", "message": "Successfully liked"}), 200
+
+
+@travel_note.route('/travel_note/<travel_note_id>/like/delete', methods=["POST"])
+@jwt_required
+def like_delete(travel_note_id):
+  if travel_note_id is None:
+    return jsonify({"mode": "travel_note/<travel_note_id>/like/delete", "status": "bad_request", "message": "There are invalid parameters"}), 400
+
+  # check travel note exists
+  try:
+    exists = TravelNote.query.get(travel_note_id)
+    if not exists:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "bad_request", "message": "Such travel note does not exist"}), 404
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # get user_name
+  user_id = get_jwt_identity()
+  try:
+    (user_name,) = User.query.with_entities(
+        User.user_name).filter(User.id == user_id).one()
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+  # check travel like exists
+  try:
+    travel_like = TravelLike.query.get((user_id, travel_note_id))
+    if not travel_like:
+      return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "bad_request", "message": "Not already liked"}), 400
+  except Exception as e:
+    logger.warn(e)
+    return jsonify({"mode": "/travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+
+
+  try:
+    db.session.delete(travel_like)
+    db.session.commit()
+  except Exception as e:
+    logger.warn(e)
+    db.session.rollback()
+    return jsonify({"mode": "travel_note/<travel_note_id>/like/delete", "status": "internal_server_error", "message": "Internal server error"}), 500
+  finally:
+    db.session.close()
+
+  return jsonify({}),204
