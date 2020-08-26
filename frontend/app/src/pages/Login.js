@@ -1,5 +1,5 @@
 // Author: Kota Ikehara
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import SNSLogin from '../components/SNSLogin';
+import User from './User';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -33,8 +34,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+export default function Login(props) {
   const classes = useStyles();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const doSignin = async (e) => {
+    e.preventDefault();
+    await User.signin(email, password);
+      if(localStorage.getItem('isLoggedIn') === 'true'){
+        props.history.push({ pathname: '/' });
+      }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -45,7 +56,7 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           ログイン
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -56,6 +67,10 @@ export default function Login() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
           <TextField
             variant="outlined"
@@ -67,6 +82,10 @@ export default function Login() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
           <Button
             type="submit"
@@ -74,6 +93,7 @@ export default function Login() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={(e) => doSignin(e)}
           >
             ログイン
           </Button>

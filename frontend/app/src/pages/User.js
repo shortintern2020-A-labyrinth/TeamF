@@ -41,7 +41,31 @@ class User {
       });
   };
 
-  login = async (email, password) => {};
+  signin = async (email, password) => {
+    await fetch('http://localhost:4000/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        localStorage.setItem('token', data.access_token);
+        if (this.get('token') === 'undefined') {
+          this.set('isLoggedIn', false);
+        } else {
+          this.set('isLoggedIn', true);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+        this.set('isLoggedIn', false);
+      });
+  };
 
   logout = async () => {
     if (this.isLoggedIn()) {
