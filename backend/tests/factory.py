@@ -49,6 +49,7 @@ def factory_travel_note(user_id,title="test",description="",country="Japan",city
   #save thumbnail
   if not os.path.exists(test_dir):
     os.mkdir(test_dir)
+  # 適当な画像を入れておく
   b64_string, _, extention = get_image_from_b64("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=")
   image_path = f"{test_dir}/thumbnail_{travel_note.id}.{extention}"
   save_image(b64_string, image_path)
