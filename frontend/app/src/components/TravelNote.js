@@ -2,8 +2,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, Grid, Typography } from '@material-ui/core';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import NoImage from '../assets/images/no_image.png';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import RoomIcon from '@material-ui/icons/Room';
 
 const useStyles = makeStyles((theme) => ({
@@ -12,23 +12,26 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         display: 'flex',
+        minHeight: '30vh'
     },
     image: {
-        width: '30%',
+        width: '40%',
         margin: theme.spacing(2),
-    },
-    like: {
-        display: 'flex',
     },
     location: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    spacing: {
+        marginRight: theme.spacing(4),
     }
 }));
 
-export default function TravelNote({ title, description, image, country, city, likeNumber, userName }) {
+export default function TravelNote({ title, description, image, country, city, start_date, end_date }) {
     const classes = useStyles();
+
+    image = image ? 'data:image/png;base64,' + image : image;
 
     return (
         <div className={classes.root}>
@@ -41,16 +44,11 @@ export default function TravelNote({ title, description, image, country, city, l
                     <Grid item xs={10}>
                         <Typography>{description ? description : '説明'}</Typography>
                     </Grid>
-                    <Grid item xs={2} className={classes.like} >
-                        <FavoriteIcon color="secondary" />
-                        <span>{likeNumber ? likeNumber : 'いいね数'}</span>
-                    </Grid>
                     <Grid item xs={8} className={classes.location}>
                         <RoomIcon />
-                        <Typography variant="body2">{country && city ? `${country} ${city}` : "国名都市名"}</Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography variant="body2">{userName ? userName : 'ユーザ名'}</Typography>
+                        <Typography variant="body2" className={classes.spacing}>{country && city ? `${country} ${city}` : "国名 都市名"}</Typography>
+                        <CalendarTodayIcon />
+                        <Typography variant="body2" className={classes.spacing}>{start_date && end_date ? `${start_date} ${end_date}` : "start end"}</Typography>
                     </Grid>
                 </Grid>
             </Card>
