@@ -14,9 +14,8 @@ class TestUserDetailAPI(BaseTestCase):
     self.assert_status(response, 404)
 
   def test_primary_user(self):
-    user = factory_user("test1@test.com")
-    print(f'/user/{user.id}')
-    response = self.app.get(f'/user/{user.id}')
+    user_id = factory_user("test1@test.com")
+    response = self.app.get(f'/user/{user_id}')
     self.assert_status(response, 200)
     json = response.json
     assert json["user_name"] == "test"
@@ -26,5 +25,16 @@ class TestUserDetailAPI(BaseTestCase):
     assert json["travel_likes"] == 0
     assert json["travel_notes"] == []
 
-  def test_one_travel_notes(self):
-    
+  def test_one_travel_note(self):
+    user_id = factory_user("test1@test.com")
+    travel_note = factory_travel_note(user_id)
+    response = self.app.get(f'/user/{user_id}')
+    self.assert_status(response, 200)
+    json = response.json
+    assert json["user_name"] == "test"
+    assert json["travel_days"] == 3
+    assert json["travel_counts"] == 1
+    assert json["travel_countries"] == 1
+    assert json["travel_likes"] == 0
+    assert len(json["travel_notes"]) == 1
+    print(json)
