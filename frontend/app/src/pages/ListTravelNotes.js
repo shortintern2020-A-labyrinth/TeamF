@@ -5,17 +5,17 @@ import { Container, Typography, Divider, Box, IconButton } from '@material-ui/co
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 async function getData(endpoint = '', params = {}) {
-    console.log("fetch")
     const searchParams = new URLSearchParams();
 
     for (const property in params) {
         searchParams.set(property, params[property]);
     }
+
     if (params) {
         endpoint += '?'
     }
+
     const url = 'http://localhost:4000' + endpoint + searchParams.toString()
-    console.log(url)
     const response = await fetch(url, {
         method: 'GET',
         mode: 'cors',
@@ -36,7 +36,6 @@ export default function ListTravelNotes() {
     useEffect(() => {
         getData('/travel_notes', { offset, limit })
             .then(res => {
-                console.log(res);
                 setTravelNotes(res);
             })
             .catch(e => {
