@@ -10,7 +10,6 @@ import Container from '@material-ui/core/Container';
 import { useStyles as LoginStyles } from './Login';
 import SNSLogin from '../components/SNSLogin';
 
-
 export default function Signup() {
   const classes = LoginStyles();
   const [name, setName] = useState('');
@@ -19,19 +18,19 @@ export default function Signup() {
 
   const doSignup = async (e) => {
     e.preventDefault();
-    fetch('http://192.168.150.66:4000/signup', {
+    fetch('http://localhost:4000/signup', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-       },
+      },
       body: JSON.stringify({
-        email: email,
-        password: password,
+        email,
+        password,
         user_name: name,
       }),
     })
-    .then((res) => console.log('res',res) )
-    .then(data => console.log("data",data))
+      .then((res) => console.log('res', res))
+      .then((data) => console.log('data', data));
   };
   return (
     <Container component="main" maxWidth="xs">
