@@ -1,5 +1,5 @@
 # shintaro ichikawa
-# cannot remove saved image when commit was failed
+
 from app.database import db
 from app.models import TravelNote, User, TravelDetail, TravelDetailImage
 from flask import jsonify, Blueprint, request
@@ -260,14 +260,16 @@ def get_all():
   
   ret = []
   for travel_note in travel_notes:
+    likes = len(travel_note.travel_likes)
     obj = {
       "id": travel_note.id,
       "title": travel_note.title,
       "description": travel_note.description,
       "country": travel_note.country,
       "city": travel_note.city,
-      "start_date": travel_note.start_date,
-      "end_date": travel_note.end_date
+      "start_date": travel_note.start_date.strftime("%Y年%m月%d日"),
+      "end_date": travel_note.end_date.strftime("%Y年%m月%d日"),
+      "likes": likes
     }
 
     image_path = travel_note.image_path
