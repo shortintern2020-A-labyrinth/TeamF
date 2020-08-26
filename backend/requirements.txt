@@ -6,3 +6,4 @@ flask_jwt_extended
 bcrypt
 pytest
 flask_testing
+flask_cors

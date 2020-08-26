@@ -2,6 +2,7 @@ import logging
 import logging.handlers
 import datetime
 from flask import Flask, jsonify
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .database import init_db, test_connection
 from .models import *
@@ -13,6 +14,7 @@ app.config.from_object('app.config.Config')
 # 各々の環境で変える
 app.config['JWT_SECRET_KEY'] = 'aqwsedrftgyhujkil'
 jwt = JWTManager(app)
+CORS(app)
 
 handler = logging.handlers.RotatingFileHandler(
     f"logs/log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log", "a+", maxBytes=3000, backupCount=5)
