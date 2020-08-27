@@ -69,7 +69,6 @@ export default function TravelNoteDetail(props) {
     const { travel_note_id } = useParams();
     const [memories, setMemories] = useState([]);
     const { title, start_date, end_date, country, city, image } = props.location.state.travelNote;
-    console.log(props.location.state.travelNote);
 
     useEffect(() => {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
