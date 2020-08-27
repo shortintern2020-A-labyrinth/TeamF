@@ -277,8 +277,7 @@ def get_all():
   ret = []
   for travel_note in travel_notes:
     try:
-      (user_name,) = User.query.with_entities(
-        User.user_name).filter(User.id == travel_note.user_id).one()
+      user = travel_note.users
     except Exception as e:
       logger.warn(e)
       return jsonify({"mode": "travel_notes", "status": "internal_server_error", "message": "Internal server error"}), 500
@@ -293,7 +292,8 @@ def get_all():
       "start_date": travel_note.start_date.strftime("%Y年%m月%d日"),
       "end_date": travel_note.end_date.strftime("%Y年%m月%d日"),
       "likes": likes,
-      "user_name": user_name
+      "user_id": user.id,
+      "user_name": user.user_name
     }
 
     image_path = travel_note.image_path
