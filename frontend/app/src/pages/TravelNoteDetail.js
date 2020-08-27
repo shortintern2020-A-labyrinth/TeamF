@@ -70,6 +70,27 @@ export default function TravelNoteDetail(props) {
     const [memories, setMemories] = useState([]);
     const { title, start_date, end_date, country, city, image } = props.location.state.travelNote;
 
+    const [commentInput, setCommentInput] = useState('');
+    const [isHidden, setIsHidden] = useState(true);
+    const token = localStorage.getItem("token");
+
+
+    async function postData(endpoint = "", params = {}) {
+        const url = "http://localhost:4000" + endpoint;
+
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(params),
+        });
+
+        return response.json();
+    }
+
     useEffect(() => {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
             .then(res => {
@@ -78,6 +99,10 @@ export default function TravelNoteDetail(props) {
             .catch(e => {
                 console.error(e);
             });
+
+        if (!token) {
+            setIsHidden(false);
+        }
     }, [travel_note_id]);
 
     return (
@@ -136,17 +161,41 @@ export default function TravelNoteDetail(props) {
                 </Container>
                 <Box mt={5}>
                     <Container maxWidth="md">
-                        <div className={classes.form}>
-                            <Avatar >H</Avatar>
-                            <TextField
-                                className={classes.spacing}
-                                id="outlined-multiline-static"
-                                label="Comment here."
-                                multiline
-                                rows={4}
-                                variant="outlined"
-                            />
-                        </div>
+                        {isHidden ?
+                            <div>
+                                <div className={classes.form}>
+                                    <form>
+                                        <Avatar >H</Avatar>
+                                        <TextField
+                                            className={classes.spacing}
+                                            id="outlined-multiline-static"
+                                            name="comment"
+                                            label="Comment here."
+                                            multiline
+                                            rows={4}
+                                            variant="outlined"
+                                            value={commentInput}
+                                            onChange={(e) => setCommentInput(e.target.value)}
+                                        />
+                                    </form>
+                                </div>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => {
+                                        postData(`/travel_note/${travel_note_id}/comment/create`, {
+                                            travel_note_id,
+                                            body: commentInput,
+                                        }).then((res) => {
+                                            props.history.push({ pathname: "/" });
+                                        });
+                                    }}
+                                >
+                                    投稿
+                            </Button>
+                            </div> :
+                            <Button>ログインしてコメントする</Button>
+                        }
                         <CommentList />
                     </Container>
                 </Box>
