@@ -42,10 +42,10 @@ export default function Login(props) {
   const doSignin = async (e) => {
     e.preventDefault();
     await User.signin(email, password);
-      if(localStorage.getItem('isLoggedIn') === 'true'){
-        props.screenProps.setLoginStatus(true);
-        props.screenProps.history.push({ pathname: '/' });
-      }
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      props.screenProps.setLoginStatus(true);
+      props.screenProps.history.push({ pathname: '/' });
+    }
   };
 
   return (
