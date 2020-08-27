@@ -70,6 +70,7 @@ class User {
   logout = async () => {
     if (this.isLoggedIn()) {
       this.set('isLoggedIn', false);
+      this.set('token', '');
     }
   };
 }
