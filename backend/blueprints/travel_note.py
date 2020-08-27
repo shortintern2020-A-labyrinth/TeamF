@@ -14,8 +14,8 @@ import datetime
 travel_note = Blueprint('travel_note', __name__)
 logger = logging.getLogger('app')
 
-tmp_dir = "/app/images/tmp"
-images_dir = "/app/images"
+tmp_dir = "./images/tmp"
+images_dir = "./images"
 
 @travel_note.route('/travel_note/test')
 def index():
@@ -194,7 +194,11 @@ def create():
     insert_travel_details(travel_note.id, user_id,
                           user_name, travel_details)
     db.session.commit()
-    move_image()
+    # for test: ファイルが存在するなら変えない
+    if os.path.exists(image_path):
+      os.remove(tmp_path)
+    else:
+      move_image()
   except Exception as e:
     logger.warn(e)
     db.session.rollback()
@@ -210,7 +214,9 @@ def get_details(travel_note_id):
     return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
 
   try:
-    travel_note = TravelNote.query.filter(TravelNote.id == travel_note_id).one()
+    travel_note = TravelNote.query.get(travel_note_id)
+    if not travel_note:
+      return jsonify({"mode": "/travel_note/<travel_note_id>", "status": "not found", "message": "Such travel note does not exist"}), 404
     travel_details = travel_note.travel_details
   except Exception as e:
     logger.warn(e)
@@ -239,7 +245,7 @@ def get_details(travel_note_id):
 
 @travel_note.route('/travel_notes', methods=["GET"])
 def get_all():
-  place = request.args.get("place", default=None, type=str)
+  country = request.args.get("country", default=None, type=str)
   start_date = request.args.get("start_date", default=None, type=int)
   end_date = request.args.get("end_date", default=None, type=int)
   limit = request.args.get("limit", default=None, type=int)
@@ -250,8 +256,8 @@ def get_all():
 
   try:
     query = TravelNote.query.order_by(TravelNote.id.desc())
-    if place is not None:
-      query = query.filter(TravelNote.place == place)
+    if country is not None:
+      query = query.filter(TravelNote.country == country)
 
     if (start_date is not None) and (end_date is not None):
       query = query.filter(TravelNote.start_date.between(start_date, end_date))
