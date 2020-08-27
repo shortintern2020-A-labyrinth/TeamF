@@ -76,17 +76,27 @@ def get_all_comments(travel_note_id):
   try:
     travel_note = TravelNote.query.get(travel_note_id)
     if not travel_note:
-      return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "bad_request", "message": "Such travel note does not exist"}), 400
+      return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "not_found", "message": "Such travel note does not exist"}), 404
   except Exception as e:
     logger.warn(e)
     return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "internal_server_error", "message": "Internal server error"}), 500
 
+
   comments = []
   for comment in travel_note.comments:
+    try:
+      user = comment.users
+    except Exception as e:
+      logger.warn(e)
+      return jsonify({"mode": "/travel_note/<travel_note_id>/comments", "status": "internal_server_error", "message": "Internal server error"}), 500
+
     comments.append({
       "id": comment.id,
       "body": comment.body,
-      "likes": len(comment.comment_likes)
+      "likes": len(comment.comment_likes),
+      "user_id": user.id,
+      "user_name": user.user_name,
+      "created_date": comment.created_date.strftime("%Y年%m月%d日%H時%M分")
     })
 
   return jsonify({
