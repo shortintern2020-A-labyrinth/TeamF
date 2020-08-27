@@ -12,6 +12,16 @@ import base64
 user = Blueprint('user', __name__)
 logger = logging.getLogger('app')
 
+def load_image(path):
+  extention = path.split('.', 1)[1]
+  ret = f"data:image/{extention};base64,"
+  with open(path, "rb") as f:
+    img_binary = f.read()
+    b64_binary = base64.b64encode(img_binary)
+    b64_string = b64_binary.decode('utf-8')
+    ret += b64_string
+  return ret
+
 @user.route('/user/test')
 def index():
   logger.warn('warn')
@@ -51,11 +61,8 @@ def user_detail(user_id):
         "likes": likes
       }
       image_path = tn.image_path
-      with open(image_path, "rb") as f:
-        img_binary = f.read()
-        b64_binary = base64.b64encode(img_binary)
-        b64_string = b64_binary.decode('utf-8')
-        obj["image"] = b64_string
+      image = load_image(image_path)
+      obj["image"] = image
       travel_notes.append(obj)
   except Exception as e:
     logger.warn(e)
@@ -100,11 +107,8 @@ def mypage():
         "likes": likes
       }
       image_path = tn.image_path
-      with open(image_path, "rb") as f:
-        img_binary = f.read()
-        b64_binary = base64.b64encode(img_binary)
-        b64_string = b64_binary.decode('utf-8')
-        obj["image"] = b64_string
+      image = load_image(image_path)
+      obj["image"] = image
       travel_notes.append(obj)
   except Exception as e:
     logger.warn(e)
