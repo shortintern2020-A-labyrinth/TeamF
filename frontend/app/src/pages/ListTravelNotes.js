@@ -1,4 +1,4 @@
-// Editor: Satoshi Moro
+// Makoto Naruse
 import React, { useState, useEffect } from 'react';
 import TravelNote from '../components/TravelNote'
 import SearchCountries from '../components/SearchCountries'
