@@ -69,14 +69,9 @@ const existTravelNote = (location) => {
 }
 
 export default function TravelNoteDetail(props) {
-    if(!existTravelNote(props.location)) {
-        props.history.push({ pathname: "/TravelNotes" });
-    }
-
     const classes = useStyles();
     const { travel_note_id } = useParams();
     const [memories, setMemories] = useState([]);
-    const { title, start_date, end_date, country, city, image } = props.location.state.travelNote;
 
     useEffect(() => {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
@@ -110,6 +105,15 @@ export default function TravelNoteDetail(props) {
                 console.error(e);
             });
     }, [travel_note_id]);
+
+    if(!existTravelNote(props.location)) {
+        props.history.push({ pathname: "/TravelNotes" });
+        return null;
+    }
+
+    const { title, start_date, end_date, country, city, image } = props.location.state.travelNote;
+
+
 
     return (
         <>
