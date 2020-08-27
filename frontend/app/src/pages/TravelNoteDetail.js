@@ -9,6 +9,7 @@ import NoImage from '../assets/images/no_image.png';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import User from './User';
 import Comment from '../components/Comment';
+import UserIcon from '../components/UserIcon';
 
 import { get } from './ListTravelNotes';
 
@@ -75,7 +76,7 @@ export default function TravelNoteDetail(props) {
     const { travel_note_id } = useParams();
     const [memories, setMemories] = useState([]);
     const [comments, setComments] = useState([]);
-    const { title, start_date, end_date, country, city, image } = props.location.state.travelNote;
+    const { title, start_date, end_date, country, city, image, user_id, user_name } = props.location.state.travelNote;
 
     const [commentInput, setCommentInput] = useState('');
     const [reloading, setReloading] = useState(false);
@@ -115,6 +116,7 @@ export default function TravelNoteDetail(props) {
         get(`http://localhost:4000/travel_note/${travel_note_id}/comments`)
             .then(res => {
                 setComments(res.comments);
+                console.log(res.comments);
             })
             .catch(e => {
                 console.error(e);
@@ -125,8 +127,8 @@ export default function TravelNoteDetail(props) {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
             .then(res => {
                 const promises = [];
-                for(const r of res) {
-                    if(r.hotel_no) {
+                for (const r of res) {
+                    if (r.hotel_no) {
                         promises.push(
                             new Promise((resolve, reject) => {
                                 get(`http://localhost:4000/hotel/${r.hotel_no}`)
@@ -145,9 +147,9 @@ export default function TravelNoteDetail(props) {
                 Promise.all(promises).then(() => {
                     setMemories([...res]);
                 })
-                .catch(e => {
-                    console.error(e);
-                })
+                    .catch(e => {
+                        console.error(e);
+                    })
             })
             .catch(e => {
                 console.error(e);
@@ -177,7 +179,9 @@ export default function TravelNoteDetail(props) {
                             <Typography className={classes.spacing}>{country && city ? `${country} ${city}` : "国名 都市名"}</Typography>
                         </Grid>
                         <Grid item xs={4} className={classes.user}>
-                            <Typography>usernameを入れる</Typography>
+                            <Link to={`/UserPage/${user_id}`} style={{ textDecoration: 'none' }}>
+                                <UserIcon name={user_name ? user_name : "ユーザ名"}></UserIcon>
+                            </Link>
                         </Grid>
                     </Grid>
                 </Container>
