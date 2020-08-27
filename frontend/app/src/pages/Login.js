@@ -43,7 +43,8 @@ export default function Login(props) {
     e.preventDefault();
     await User.signin(email, password);
       if(localStorage.getItem('isLoggedIn') === 'true'){
-        props.history.push({ pathname: '/' });
+        props.screenProps.setLoginStatus(true);
+        props.screenProps.history.push({ pathname: '/' });
       }
   };
 
