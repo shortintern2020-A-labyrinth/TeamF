@@ -11,6 +11,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import InputBase from '@material-ui/core/InputBase';
 import { Link } from 'react-router-dom';
 import EditIcon from '@material-ui/icons/Edit';
+import User from '../pages/User';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,8 +70,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ButtonAppBar() {
+export default function Nav(props) {
   const classes = useStyles();
+
+  const doLogout = async (e) => {
+    e.preventDefault();
+    await User.logout();
+    props.screenProps.setLoginStatus(false);
+  };
 
   return (
     <div>
@@ -78,6 +85,7 @@ export default function ButtonAppBar() {
         <Toolbar className={classes.root}>
           <Typography variant="h6" noWrap>
             <Link className={classes.title} to="/TravelNotes">
+            <Link className={classes.title} to="/">
               トラベルノーツ
             </Link>
           </Typography>
@@ -100,22 +108,45 @@ export default function ButtonAppBar() {
                 旅行記作成
               </Button>
             </Link>
-            <Link className={classes.navLink} to="/Signup">
-              <Button
-                className={classes.navButton}
-                startIcon={<AccountCircleIcon />}
-              >
-                アカウント作成
-              </Button>
-            </Link>
-            <Link className={classes.navLink} to="/Login">
-              <Button
-                className={classes.navButton}
-                startIcon={<ExitToAppIcon />}
-              >
-                ログイン
-              </Button>
-            </Link>
+
+            {props.screenProps.loginStatus ? (
+              <>
+                <Link className={classes.navLink} to="/MyPage">
+                  <Button
+                    className={classes.navButton}
+                    startIcon={<AccountCircleIcon />}
+                  >
+                    マイページ
+                  </Button>
+                </Link>
+                <Button
+                  className={classes.navButton}
+                  startIcon={<ExitToAppIcon />}
+                  onClick={(e) => doLogout(e)}
+                >
+                  ログアウト
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link className={classes.navLink} to="/Signup">
+                  <Button
+                    className={classes.navButton}
+                    startIcon={<AccountCircleIcon />}
+                  >
+                    アカウント作成
+                  </Button>
+                </Link>
+                <Link className={classes.navLink} to="/Login">
+                  <Button
+                    className={classes.navButton}
+                    startIcon={<ExitToAppIcon />}
+                  >
+                    ログイン
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </Toolbar>
       </AppBar>
