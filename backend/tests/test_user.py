@@ -62,7 +62,7 @@ class TestMyPageAPI(BaseTestCase):
     self.assert_status(response, 401)
 
   def test_primary_user(self):
-    user_id = factory_user(email="test1@test.com",password="password")
+    user_id = factory_user(user_name="test",email="test1@test.com",password="password")
     # sign_in
     response1 = self.app.post(
       '/signin',
@@ -81,6 +81,7 @@ class TestMyPageAPI(BaseTestCase):
     )
     self.assert_status(response2, 200)
     result = response2.json
+    assert result["user_name"] == "test"
     assert result["travel_days"] == 0
     assert result["travel_counts"] == 0
     assert result["travel_countries"] == 0
@@ -88,7 +89,7 @@ class TestMyPageAPI(BaseTestCase):
     assert result["travel_notes"] == []
 
   def test_one_travel_note(self):
-    user_id = factory_user(email="test1@test.com",password="password")
+    user_id = factory_user(user_name="test",email="test1@test.com",password="password")
     # sign_in
     response1 = self.app.post(
       '/signin',
@@ -108,6 +109,7 @@ class TestMyPageAPI(BaseTestCase):
     )
     self.assert_status(response2, 200)
     result = response2.json
+    assert result["user_name"] == "test"
     assert result["travel_days"] == 3
     assert result["travel_counts"] == 1
     assert result["travel_countries"] == 1
@@ -115,7 +117,7 @@ class TestMyPageAPI(BaseTestCase):
     assert len(result["travel_notes"]) == 1
 
   def test_multi_travel_note(self):
-    user_id = factory_user(email="test1@test.com",password="password")
+    user_id = factory_user(user_name="test",email="test1@test.com",password="password")
     # sign_in
     response1 = self.app.post(
       '/signin',
@@ -137,6 +139,7 @@ class TestMyPageAPI(BaseTestCase):
     )
     self.assert_status(response2, 200)
     result = response2.json
+    assert result["user_name"] == "test"
     assert result["travel_days"] == 9
     assert result["travel_counts"] == 3
     assert result["travel_countries"] == 2
