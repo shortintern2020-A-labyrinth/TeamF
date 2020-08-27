@@ -14,8 +14,8 @@ import datetime
 travel_note = Blueprint('travel_note', __name__)
 logger = logging.getLogger('app')
 
-tmp_dir = "/app/images/tmp"
-images_dir = "/app/images"
+tmp_dir = "./images/tmp"
+images_dir = "./images"
 
 @travel_note.route('/travel_note/test')
 def index():
