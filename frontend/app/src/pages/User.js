@@ -26,7 +26,15 @@ class User {
         user_name: name,
       }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if(response.status === 401){
+          alert('認証に失敗しました。メールアドレスとパスワードをご確認ください。');
+        }
+        else if(response.status !== 201){
+          alert('送信に失敗しました');
+        }
+        return response.json();
+      })
       .then((data) => {
         localStorage.setItem('token', data.access_token);
         if (this.get('token') === 'undefined') {
@@ -52,7 +60,15 @@ class User {
         password,
       }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if(response.status === 401){
+          alert('認証に失敗しました。メールアドレスとパスワードをご確認ください。');
+        }
+        else if(response.status !== 200){
+          alert('送信に失敗しました');
+        }
+        return response.json();
+      })
       .then((data) => {
         localStorage.setItem('token', data.access_token);
         if (this.get('token') === 'undefined') {
