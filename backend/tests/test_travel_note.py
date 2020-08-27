@@ -175,4 +175,115 @@ class TestMyPageAPI(BaseTestCase):
     assert result["travel_countries"] == 2
     assert result["travel_likes"] == 0
     assert len(result["travel_notes"]) == 3
+
+class TestCreateAPI(BaseTestCase):
+
+  def test_no_authorizaton(self):
+    response = self.app.post('/travel_note/create')
+    self.assert_status(response, 401)
+
+  def test_invalid_param(self):
+    # まずはsignup
+    response1 = self.app.post(
+      '/signup',
+      data=json.dumps(dict(
+        email='example@example.com',
+        password='password',
+        user_name='test'
+      )),
+      content_type='application/json'
+    )
+    self.assert_status(response1, 201)
+    access_token = response1.json["access_token"]
+
+    response2 = self.app.post(
+      '/travel_note/create',
+      headers={
+        'Authorization': f"Bearer {access_token}"
+      }
+    )
+    self.assert_status(response2, 400)
+
+'''
+  def test_invalid_date_param(self):
+    # まずはsignup
+    test_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+    response1 = self.app.post(
+      '/signup',
+      data=json.dumps(dict(
+        email='example@example.com',
+        password='password',
+        user_name='test'
+      )),
+      content_type='application/json'
+    )
+    self.assert_status(response1, 201)
+    access_token = response1.json["access_token"]
+
+    response2 = self.app.post(
+      '/travel_note/create',
+      headers={
+        'Authorization': f"Bearer {access_token}"
+      },
+      data=json.dumps(dict(
+        title='test',
+        image=test_image,
+        description='test',
+        country='日本',
+        city='千葉',
+        start_date=1600000000,
+        end_date=1599000000,
+        travel_details=[]
+      )),
+      content_type='application/json'
+    )
+    self.assert_status(response2, 400)
+    print(response2.json)
+
+  def test_create_param(self):
+    test_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+    # まずはsignup
+    response1 = self.app.post(
+      '/signup',
+      data=json.dumps(dict(
+        email='example@example.com',
+        password='password',
+        user_name='test'
+      )),
+      content_type='application/json'
+    )
+    self.assert_status(response1, 201)
+    access_token = response1.json["access_token"]
+    response2 = self.app.post(
+      '/travel_note/create',
+      headers={
+        'Authorization': f"Bearer {access_token}"
+      },
+      data=json.dumps(dict(
+        title='test',
+        image=test_image,
+        description='test',
+        country='日本',
+        city='千葉',
+        start_date=1598000000,
+        end_date=1599000000,
+        travel_details=[
+          dict(
+            place='良い場所1',
+            images=[
+              test_image
+            ]
+          ),
+          dict(
+            place='良い場所2',
+            images=[
+              test_image
+            ]
+          )
+        ]
+      )),
+      content_type='application/json'
+    )
+    self.assert_status(response2, 201)
+    print(response2.json)
 '''
