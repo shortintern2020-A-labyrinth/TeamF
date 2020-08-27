@@ -1,18 +1,19 @@
 // Author: Kota Ikehara
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Copyright from './components/Copyright';
 import Nav from './components/Nav';
 import CreateTravelNote from './pages/CreateTravelNote';
-import ListTravelNotes from './pages/ListTravelNotes';
-import EditTravelNote from './pages/EditTravelNote';
-import TravelNoteDetail from './pages/TravelNoteDetail';
-import MyPage from './pages/MyPage';
-import UserPage from './pages/UserPage';
+import ListTravelNotes from './pages/ListTravelNotes'
+import EditTravelNote from './pages/EditTravelNote'
+import TravelNoteDetail from './pages/TravelNoteDetail'
+import MyPage from './pages/MyPage'
+import UserPage from './pages/UserPage'
 import Auth from './pages/Auth';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 const App = () => {
@@ -34,9 +35,11 @@ const App = () => {
   return (
     <div className="App">
       <Router>
+        <ScrollToTop />
         <Nav screenProps={{ loginStatus, setLoginStatus }} />
         <Switch>
-          <Route exact path="/" component={ListTravelNotes} />
+          <Route exact path="/" render={() => <Redirect to="/TravelNotes" />} />
+          <Route path="/TravelNotes" component={ListTravelNotes} />
           <Route
             path="/Login"
             render={(props) => (
@@ -49,6 +52,8 @@ const App = () => {
               <Signup screenProps={{ ...props, loginStatus, setLoginStatus }} />
             )}
           />
+          <Route path="/TravelNote/:travel_note_id" component={TravelNoteDetail} />
+          <Redirect exact from="/" to="/TravelNotes" />
           <Route path="/TravelNoteDetail" component={TravelNoteDetail} />
           <Route path="/UserPage" component={UserPage} />
           <Auth screenProps={{ loginStatus, setLoginStatus }}>

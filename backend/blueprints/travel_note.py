@@ -267,8 +267,8 @@ def get_all():
       "description": travel_note.description,
       "country": travel_note.country,
       "city": travel_note.city,
-      "start_date": travel_note.start_date.strftime("%Y年%m月%d日"),
-      "end_date": travel_note.end_date.strftime("%Y年%m月%d日"),
+      "start_date": travel_note.start_date,
+      "end_date": travel_note.end_date,
       "likes": likes
     }
 
