@@ -116,7 +116,6 @@ export default function TravelNoteDetail(props) {
         get(`http://localhost:4000/travel_note/${travel_note_id}/comments`)
             .then(res => {
                 setComments(res.comments);
-                console.log(res.comments);
             })
             .catch(e => {
                 console.error(e);
