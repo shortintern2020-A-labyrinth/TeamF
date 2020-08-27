@@ -110,6 +110,7 @@ def mypage():
     logger.warn(e)
     raise e
   return jsonify({
+    "user_name": user.user_name,
     "travel_days": travel_days,
     "travel_counts": travel_counts,
     "travel_countries": len(travel_countries),

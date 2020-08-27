@@ -1,12 +1,14 @@
 import logging
 import logging.handlers
 import datetime
+import click
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .database import init_db, test_connection
 from .models import *
 from .blueprints import *
+from .seeder import register_commands
 
 app=Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -34,6 +36,8 @@ app.register_blueprint(auth, url_prefix="/")
 app.register_blueprint(comment, url_prefix="/")
 
 init_db(app)
+
+register_commands(app)
 
 @app.route('/')
 def index():
