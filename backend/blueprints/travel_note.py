@@ -129,7 +129,7 @@ def create():
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
   if "image" not in request.json:
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
-  if "start_date" not in request.json and "end_date" not in request.json:
+  if "start_date" not in request.json or "end_date" not in request.json:
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
 
   b64_string, types, extention = get_image_from_b64(request.json["image"])
