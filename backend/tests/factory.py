@@ -79,7 +79,7 @@ def factory_travel_detail(travel_note_id,place="良さげなスポット",lat=No
   b64_string, _, extention = get_image_from_b64("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=")
   img_path = f"{test_dir}/detail_{travel_detail.id}_1.{extention}"
   travel_image = TravelDetailImage(
-    travel_detail_id, img_path, user_name, user_name)
+    travel_detail.id, img_path, user_name, user_name)
   try:
     save_image(b64_string, img_path)
   except Exception as e:
