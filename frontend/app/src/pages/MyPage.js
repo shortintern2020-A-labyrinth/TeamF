@@ -21,7 +21,6 @@ export default function MyPage() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setMyTravelNotes(data.travel_notes);
         setUserData(data);
       })
