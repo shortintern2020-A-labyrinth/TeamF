@@ -80,16 +80,13 @@ def factory_travel_detail(travel_note_id,place="良さげなスポット",lat=No
   img_path = f"{test_dir}/detail_{travel_detail.id}_1.{extention}"
   travel_image = TravelDetailImage(
     travel_detail.id, img_path, user_name, user_name)
-  try:
-    save_image(b64_string, img_path)
-  except Exception as e:
-    logger.warn(e)
-    raise e
 
   try:
+    save_image(b64_string, img_path)
     db.session.add(travel_image)
     db.session.commit()
     return travel_detail.id
+
   except Exception as e:
     logger.warn(e)
     raise e
