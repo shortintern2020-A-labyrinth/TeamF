@@ -61,6 +61,13 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         width: '100%'
     },
+    comment: {
+        width: '40vw',
+    },
+    commentButton: {
+        marginTop: theme.spacing(2),
+
+    }
 }));
 
 export default function TravelNoteDetail(props) {
@@ -161,17 +168,17 @@ export default function TravelNoteDetail(props) {
                         );
                     })}
                 </Container>
-                <Box mt={5}>
+                <Box m={6}>
                     <Container maxWidth="md">
                         {isLoggedIn !== "false" ?
                             <div>
                                 <div className={classes.form}>
                                     <form>
                                         <TextField
-                                            className={classes.spacing}
+                                            className={classes.comment}
                                             id="outlined-multiline-static"
                                             name="comment"
-                                            label="Comment here."
+                                            label="コメント"
                                             multiline
                                             rows={4}
                                             variant="outlined"
@@ -181,6 +188,7 @@ export default function TravelNoteDetail(props) {
                                     </form>
                                 </div>
                                 <Button
+                                    className={classes.commentButton}
                                     variant="contained"
                                     color="primary"
                                     onClick={() => {
@@ -200,6 +208,7 @@ export default function TravelNoteDetail(props) {
                             </Button>
                             </div> :
                             <Button
+                                className={classes.commentButton}
                                 variant="contained"
                                 color="primary"
                                 component={Link}
