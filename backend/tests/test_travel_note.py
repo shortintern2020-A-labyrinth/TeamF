@@ -72,7 +72,7 @@ class TestGetAllAPI(BaseTestCase):
     assert result[0]["id"] == id2
     assert result[1]["id"] == id1
 
-# TODO 日付周りのテスト
+# TODO: 日付周り絞り込みのテスト まだフロントの機能としてない
 '''
   def test_with_invalid_date(self):
     today = datetime.today()
@@ -85,6 +85,22 @@ class TestGetAllAPI(BaseTestCase):
     )
     self.assert_status(response, 400)
 '''
+
+class TestDetailAPI(BaseTestCase):
+  
+  def test_not_found(self):
+    response = self.app.get('/travel_note/1')
+    self.assert_status(response, 404)
+
+  def test_sccess(self):
+    user_id = factory_user("test1@test.com")
+    travel_note_id = factory_travel_note(user_id)
+    factory_travel_detail(travel_note_id)
+    factory_travel_detail(travel_note_id)
+    response = self.app.get(f'/travel_note/{travel_note_id}')
+    self.assert_status(response, 200)
+    result = response.json
+    assert len(result) == 2
 
 class TestCreateAPI(BaseTestCase):
 

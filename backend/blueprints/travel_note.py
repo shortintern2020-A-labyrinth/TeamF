@@ -214,7 +214,9 @@ def get_details(travel_note_id):
     return jsonify({"mode": "travel_notes", "status": "bad_request", "message": "Parameter is invalid"}), 400
 
   try:
-    travel_note = TravelNote.query.filter(TravelNote.id == travel_note_id).one()
+    travel_note = TravelNote.query.get(travel_note_id)
+    if not travel_note:
+      return jsonify({"mode": "/travel_note/<travel_note_id>", "status": "not found", "message": "Such travel note does not exist"}), 404
     travel_details = travel_note.travel_details
   except Exception as e:
     logger.warn(e)
