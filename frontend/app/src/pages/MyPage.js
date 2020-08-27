@@ -44,7 +44,7 @@ export default function MyPage() {
             旅行記一覧
           </Typography>
           <Divider />
-          {myTravelNotes === [] ? (
+          {myTravelNotes.length === 0 ? (
             <Box mt={5}>
               <Typography variant="h6" align="center">
                 「旅行記作成」から旅行記を作ってみよう！
