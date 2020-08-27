@@ -366,7 +366,7 @@ export default function CreateTravelNote(props) {
               startDate: new Date(startDate).getTime(),
               endDate: new Date(endDate).getTime(),
               description,
-              memories,
+              travel_details: memories,
               image,
             }).then((res) => {
               props.history.push({ pathname: "/" });
