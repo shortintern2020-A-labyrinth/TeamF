@@ -3,6 +3,7 @@
 from .base import BaseTestCase, db
 
 import json
+from datetime import datetime, date, timedelta
 
 from app.app import app
 from .factory import *
@@ -68,29 +69,23 @@ class TestGetAllAPI(BaseTestCase):
     )
     self.assert_status(response, 200)
     result = response.json
-    assert len(result) == 2
     assert result[0]["id"] == id2
     assert result[1]["id"] == id1
 
-  def test_with_future_date(self):
-    user_id = factory_user("test1@test.com")
-    id1 = factory_travel_note(user_id,country="日本")
-    id2 = factory_travel_note(user_id,country="日本")
-    id3 = factory_travel_note(user_id,country="日本")
+# TODO 日付周りのテスト
+'''
+  def test_with_invalid_date(self):
+    today = datetime.today()
     response = self.app.get(
       '/travel_notes',
       query_string=dict(
-        limit=2,
-        offset=1,
+        start_date=(today + timedelta(days=1)).strftime("%Y-%m-%d"),
+        end_date=(today - timedelta(days=1)).strftime("%Y-%m-%d"),
       ),
     )
-    self.assert_status(response, 200)
-    result = response.json
-    assert len(result) == 2
-    assert result[0]["id"] == id2
-    assert result[1]["id"] == id1
-
+    self.assert_status(response, 400)
 '''
+
 class TestMyPageAPI(BaseTestCase):
 
   def test_no_login(self):
