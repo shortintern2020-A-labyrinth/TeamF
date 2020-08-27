@@ -64,7 +64,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const existTravelNote = (location) => {
+    return location && location.state && location.state.travelNote;
+}
+
 export default function TravelNoteDetail(props) {
+    if(!existTravelNote(props.location)) {
+        props.history.push({ pathname: "/TravelNotes" });
+    }
+
     const classes = useStyles();
     const { travel_note_id } = useParams();
     const [memories, setMemories] = useState([]);
