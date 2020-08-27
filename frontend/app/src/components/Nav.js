@@ -85,7 +85,6 @@ export default function Nav(props) {
         <Toolbar className={classes.root}>
           <Typography variant="h6" noWrap>
             <Link className={classes.title} to="/TravelNotes">
-            <Link className={classes.title} to="/">
               トラベルノーツ
             </Link>
           </Typography>
@@ -128,25 +127,25 @@ export default function Nav(props) {
                 </Button>
               </>
             ) : (
-              <>
-                <Link className={classes.navLink} to="/Signup">
-                  <Button
-                    className={classes.navButton}
-                    startIcon={<AccountCircleIcon />}
-                  >
-                    アカウント作成
+                <>
+                  <Link className={classes.navLink} to="/Signup">
+                    <Button
+                      className={classes.navButton}
+                      startIcon={<AccountCircleIcon />}
+                    >
+                      アカウント作成
                   </Button>
-                </Link>
-                <Link className={classes.navLink} to="/Login">
-                  <Button
-                    className={classes.navButton}
-                    startIcon={<ExitToAppIcon />}
-                  >
-                    ログイン
+                  </Link>
+                  <Link className={classes.navLink} to="/Login">
+                    <Button
+                      className={classes.navButton}
+                      startIcon={<ExitToAppIcon />}
+                    >
+                      ログイン
                   </Button>
-                </Link>
-              </>
-            )}
+                  </Link>
+                </>
+              )}
           </div>
         </Toolbar>
       </AppBar>

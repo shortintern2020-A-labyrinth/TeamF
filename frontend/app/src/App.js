@@ -52,6 +52,8 @@ const App = () => {
               <Signup screenProps={{ ...props, loginStatus, setLoginStatus }} />
             )}
           />
+          <Route path="/TravelNote/:travel_note_id" component={TravelNoteDetail} />
+          <Redirect exact from="/" to="/TravelNotes" />
           <Route path="/TravelNoteDetail" component={TravelNoteDetail} />
           <Route path="/UserPage" component={UserPage} />
           <Auth screenProps={{ loginStatus, setLoginStatus }}>
@@ -59,8 +61,6 @@ const App = () => {
             <Route path="/EditTravelNote" component={EditTravelNote} />
             <Route path="/MyPage" component={MyPage} />
           </Auth>
-          <Route path="/TravelNote/:travel_note_id" component={TravelNoteDetail} />
-          <Redirect exact from="/" to="/TravelNotes" />
           <Box mt={8}>
             <Copyright />
           </Box>
