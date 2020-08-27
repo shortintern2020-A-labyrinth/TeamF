@@ -2,6 +2,7 @@
 import React from 'react';
 import { Avatar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,10 +17,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserIcon({ src, name }) {
     const classes = useStyles()
-
     return (
         <div className={classes.root}>
-            <Avatar>H</Avatar>
+            <AccountCircleTwoToneIcon />
             <Typography className={classes.spacing}>{name ? name : "name"}</Typography>
         </div>
     );

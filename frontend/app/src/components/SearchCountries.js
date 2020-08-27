@@ -52,7 +52,7 @@ export default function SearchCountries() {
             <Link key={index} to={{ pathname: `/TravelNotes`, state: { country } }} style={{ textDecoration: 'none' }}>
               <Country
                 key={index}
-                {...{country}}
+                {...{ country }}
               />
             </Link>
           ))}

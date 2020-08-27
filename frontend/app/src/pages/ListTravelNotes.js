@@ -36,7 +36,7 @@ export default function ListTravelNotes(props) {
     };
 
     var params = {};
-    if( country && country !== "世界" ){
+    if (country && country !== "世界") {
         params = { offset, limit, country };
     } else {
         params = { offset, limit }
@@ -50,8 +50,8 @@ export default function ListTravelNotes(props) {
             .catch(e => {
                 console.error(e);
             })
-    // eslint-disable-next-line
-    }, [offset, country]); 
+        // eslint-disable-next-line
+    }, [offset, country]);
 
     return (
         <Box my={10} mx={30}>
