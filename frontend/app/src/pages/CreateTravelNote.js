@@ -124,6 +124,7 @@ export default function CreateTravelNote(props) {
   const [cnt, setCnt] = React.useState(0);
   const [openError, setOpenError] = React.useState(false);
   const [openParamError, setOpenParamError] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
   const ref = React.createRef();
 
   const createMemory = () => {
@@ -172,13 +173,15 @@ export default function CreateTravelNote(props) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(params),
+    }).catch((err) => {
+      setOpenError(true);
     });
 
     if (response.status === 401) {
       props.history.push({ pathname: "/Login" });
     }
     if (response.status !== 201) {
-      setOpenError(false);
+      throw new Error("送信に失敗しました");
     }
 
     return response.json();
@@ -197,7 +200,7 @@ export default function CreateTravelNote(props) {
         aria-describedby="error-description"
       >
         <div className={classes.modal}>
-          <p>送信に失敗しました</p>
+          <p>{errorMessage}</p>
           <Button onClick={() => setOpenError(false)}>閉じる</Button>
         </div>
       </Modal>
@@ -359,18 +362,29 @@ export default function CreateTravelNote(props) {
               return;
             }
 
+            if (startDate > endDate) {
+              setErrorMessage("日付に誤りがあります");
+              setOpenError(true);
+              return;
+            }
+
             postData("/travel_note/create", {
               title,
               country,
               city,
-              start_date: (new Date(startDate).getTime() / 1000),
-              end_date: (new Date(endDate).getTime() / 1000),
+              start_date: new Date(startDate).getTime() / 1000,
+              end_date: new Date(endDate).getTime() / 1000,
               description,
               travel_details: memories,
               image,
-            }).then((res) => {
-              props.history.push({ pathname: "/" });
-            });
+            })
+              .then((res) => {
+                props.history.push({ pathname: "/" });
+              })
+              .catch((err) => {
+                setErrorMessage(err);
+                setOpenError(true);
+              });
           }}
         >
           投稿

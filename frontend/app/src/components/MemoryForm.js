@@ -55,8 +55,8 @@ export default function MemoryForm(props) {
   const classes = useStyles();
 
   const [place, setPlace] = React.useState("");
-  const [lat, setLat] = React.useState(null);
-  const [lng, setLng] = React.useState(null);
+  // const [lat, setLat] = React.useState(null);
+  // const [lng, setLng] = React.useState(null);
   const [images, setImages] = React.useState([]);
   const [description, setDescription] = React.useState("");
   const ref = React.createRef();
