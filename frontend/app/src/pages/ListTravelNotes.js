@@ -42,7 +42,6 @@ export default function ListTravelNotes(props) {
         get('http://localhost:4000/travel_notes', params)
             .then(res => {
                 setTravelNotes(res);
-                console.log(res)
             })
             .catch(e => {
                 console.error(e);
