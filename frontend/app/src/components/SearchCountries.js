@@ -51,6 +51,7 @@ export default function SearchCountries() {
           {countries.map((country, index) => (
             <Link key={index} to={{ pathname: `/TravelNotes`, state: { country } }} style={{ textDecoration: 'none' }}>
               <Country
+                key={index}
                 {...{ country }}
               />
             </Link>

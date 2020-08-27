@@ -71,13 +71,15 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const existTravelNote = (location) => {
+    return location && location.state && location.state.travelNote;
+}
+
 export default function TravelNoteDetail(props) {
     const classes = useStyles();
     const { travel_note_id } = useParams();
     const [memories, setMemories] = useState([]);
     const [comments, setComments] = useState([]);
-    const { title, start_date, end_date, country, city, image, user_id, user_name } = props.location.state.travelNote;
-
     const [commentInput, setCommentInput] = useState('');
     const [reloading, setReloading] = useState(false);
 
@@ -154,6 +156,15 @@ export default function TravelNoteDetail(props) {
                 console.error(e);
             });
     }, [travel_note_id]);
+
+    if(!existTravelNote(props.location)) {
+        props.history.push({ pathname: "/TravelNotes" });
+        return null;
+    }
+
+    const { title, start_date, end_date, country, city, image, user_id, user_name } = props.location.state.travelNote;
+
+
 
     return (
         <>

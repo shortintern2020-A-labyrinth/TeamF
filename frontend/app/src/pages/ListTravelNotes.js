@@ -21,12 +21,16 @@ export async function get(url = "", params = {}) {
     return response.json();
 }
 
+const extractCountry = (location) => {
+    return location && location.state && location.state.country;
+}
+
 export default function ListTravelNotes(props) {
 
     const [travelNotes, setTravelNotes] = useState([]);
     const [offset, setOffset] = useState(0);
     const limit = 5;
-    const country = props.location.state;
+    const country = extractCountry(props.location);
     const onNextButtonClicked = () => {
         setOffset(offset + limit);
     };
