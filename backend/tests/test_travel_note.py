@@ -195,4 +195,9 @@ class TestCreateAPI(BaseTestCase):
       content_type='application/json'
     )
     self.assert_status(response2, 201)
-    print(response2.json)
+    
+    # GETできる
+    response = self.app.get('/travel_notes')
+    self.assert_status(response, 200)
+    result = response.json
+    assert len(result) == 1
