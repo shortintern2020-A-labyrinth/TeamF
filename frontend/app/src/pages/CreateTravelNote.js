@@ -90,6 +90,11 @@ const useStyles = makeStyles((theme) => ({
   hiddenInput: {
     display: "none",
   },
+  title: {
+    display: "inline-block",
+    borderBottom: "solid black",
+    width: "60%",
+  },
 }));
 
 export default function BasicTextFields() {
@@ -141,7 +146,7 @@ export default function BasicTextFields() {
 
   return (
     <div>
-      <h2>旅行記の作成</h2>
+      <h2 className={classes.title}>旅行記の作成</h2>
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
           label="タイトル"
@@ -240,7 +245,7 @@ export default function BasicTextFields() {
         </Grid>
         <Grid item xs={2} />
       </Grid>
-      <h2>思い出の追加</h2>
+      <h2 className={classes.title}>思い出の追加</h2>
       <div>
         {memories.map((e, index) => (
           <div key={e.id} className={classes.memoryContainer}>
@@ -284,7 +289,7 @@ export default function BasicTextFields() {
               endDate,
               description,
               memories,
-              image
+              image,
             })
           }
         >
