@@ -1,66 +1,68 @@
 // Author: Kota Ikehara
-import React from 'react';
 import { Typography, Divider, Grid, Box } from '@material-ui/core';
-import UserProfile from '../components/UserProfile';
-import TravelNote from '../components/TravelNote';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
-const travelNotes = [
-  {
-    id: 1,
-    title: '千葉への旅行',
-    description: '楽しかった',
-    image: '',
-    country: '千葉県',
-    city: '千葉市',
-    startDate: '',
-    endDate: '',
-    // optional
-    likeNumber: 6,
-    userName: '田中',
-  },
-  {
-    id: 2,
-    title: '千葉への旅行',
-    description: '楽しかった',
-    image: '',
-    country: '千葉県',
-    city: '千葉市',
-    startDate: '',
-    endDate: '',
-    // optional
-    likeNumber: 7,
-    userName: '田中',
-  },
-  {
-    id: 3,
-    title: '千葉への旅行',
-    description: '楽しかった',
-    image: '',
-    country: '千葉県',
-    city: '千葉市',
-    startDate: '',
-    endDate: '',
-    // optional
-    likeNumber: 10,
-    userName: '田中',
-  },
-];
+import TravelNote from '../components/TravelNote';
+import UserProfile from '../components/UserProfile';
 
 export default function UserPage() {
+  const [userData, setUserData] = useState({});
+  const { user_id } = useParams();
+  const [travelNotes, setTravelNotes] = useState([]);
+
+  const getTravelNotes = async () => {
+    await fetch(`http://localhost:4000/user/${user_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTravelNotes(data.travel_notes);
+        setUserData(data);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  useEffect(() => {
+    getTravelNotes();
+  });
+
   return (
     <Box my={10} mx={5}>
       <Grid container spacing={3}>
         <Grid item xs={4}>
-          <UserProfile />
+          <UserProfile {...userData} />
         </Grid>
         <Grid item xs={8}>
           <Typography variant="h4" align="left">
             旅行記一覧
           </Typography>
           <Divider />
-          {travelNotes.map((travelNote) => (
-            <TravelNote key={travelNote.id} {...travelNote} />
-          ))}
+          {travelNotes.length === 0 ? (
+            <Box mt={5}>
+              <Typography variant="h6" align="center">
+                「旅行記」がありません．
+              </Typography>
+            </Box>
+          ) : (
+            travelNotes.map((travelNote) => (
+              <Link
+                key={travelNote.id}
+                to={{
+                  pathname: `/TravelNote/${travelNote.id}`,
+                  state: { travelNote },
+                }}
+                style={{ textDecoration: 'none' }}
+              >
+                <TravelNote {...travelNote} />
+              </Link>
+            ))
+          )}
         </Grid>
       </Grid>
     </Box>
