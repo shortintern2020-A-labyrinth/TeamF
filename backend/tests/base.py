@@ -6,7 +6,6 @@ from app.app import app
 
 from app.database import db, init_db
 
-
 class BaseTestCase(TestCase):
   def create_app(self):
     app.config['TESTING'] = True

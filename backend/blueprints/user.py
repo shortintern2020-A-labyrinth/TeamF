@@ -26,6 +26,8 @@ def user_detail(user_id):
   try:
     # join(TravelNote, User.id == TravelNote.user_id).join(TravelLike, TravelNote.id == TravelLike.travel_notes_id).
     user = db.session.query(User).filter(User.id == user_id).first()
+    if user is None:
+      return jsonify({"mode": "user_detail", "status": "not_found", "message": "user not found"}), 404
     travel_countries = []
     travel_days = 0
     travel_counts = 0
