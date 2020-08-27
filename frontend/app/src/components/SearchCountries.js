@@ -48,10 +48,10 @@ export default function SearchCountries() {
           </Typography>
         </div>
         <List>
-          {countries.map(country => (
-            <Link to={{ pathname: `/TravelNotes`, state: { country } }} style={{ textDecoration: 'none' }}>
+          {countries.map((country, index) => (
+            <Link key={index} to={{ pathname: `/TravelNotes`, state: { country } }} style={{ textDecoration: 'none' }}>
               <Country
-                {...{country}}
+                {...{ country }}
               />
             </Link>
           ))}
