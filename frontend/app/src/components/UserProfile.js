@@ -31,24 +31,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const User = {
-  user_name: '高橋',
-  travel_days: '3',
-  travel_counts: '12',
-  travel_countries: '12',
-  likes: '100',
-};
 
-export default function UserProfile() {
+export default function UserProfile({user_name, travel_days, travel_counts, travel_countries, travel_likes}) {
   const classes = useStyles();
-
   return (
     <Card className={classes.root}>
       <img className={classes.media} src={NoImage} alt="user" />
       <CardContent>
         <div className={classes.name}>
           <Typography variant="h5" component="h2">
-            {User.user_name}
+            {user_name ? user_name : '名無し'}
           </Typography>
           <Typography variant="subtitle1" component="h6">
             さんのページ
@@ -62,7 +54,7 @@ export default function UserProfile() {
                 <TodayIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="旅行日数" secondary={User.travel_counts} />
+            <ListItemText primary="旅行日数" secondary={travel_days ? travel_days : 0} />
           </ListItem>
 
           <ListItem>
@@ -71,7 +63,7 @@ export default function UserProfile() {
                 <WorkIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="旅行回数" secondary={User.travel_counts} />
+            <ListItemText primary="旅行回数" secondary={travel_counts ? travel_counts : 0} />
           </ListItem>
 
           <ListItem>
@@ -82,7 +74,7 @@ export default function UserProfile() {
             </ListItemAvatar>
             <ListItemText
               primary="訪れた国の数"
-              secondary={User.travel_countries}
+              secondary={travel_countries ? travel_countries : 0}
             />
           </ListItem>
 
@@ -92,7 +84,7 @@ export default function UserProfile() {
                 <FavoriteIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="いいね" secondary={User.likes} />
+            <ListItemText primary="いいね" secondary={travel_likes ? travel_likes : 0} />
           </ListItem>
         </List>
       </CardContent>

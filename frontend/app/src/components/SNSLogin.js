@@ -34,7 +34,7 @@ export default function SNSLogin() {
         color="primary"
         className={classes.buttonTwitter}
       >
-        <TwitterIcon color="default" />
+        <TwitterIcon />
       </Button>
       {/* TODO: Add OAuth function */}
       <Button
