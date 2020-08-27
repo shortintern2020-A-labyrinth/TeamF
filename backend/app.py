@@ -34,6 +34,8 @@ app.register_blueprint(user, url_prefix="/")
 app.register_blueprint(auth, url_prefix="/")
 # comment周りの実装
 app.register_blueprint(comment, url_prefix="/")
+# hotel周りの実装
+app.register_blueprint(hotel, url_prefix="/")
 
 init_db(app)
 

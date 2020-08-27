@@ -32,6 +32,7 @@ services:
       APP_DATABASE_NAME: travel-notes
       APP_DATABASE_USER: root
       APP_DATABASE_PASSWORD: root
+      RAKUTEN_APPLICATION_ID: "1048314173959090169"
       FLASK_ENV: development
       TZ: Asia/Tokyo
     command: sh -c "./wait-for-it.sh db:3306 -- ./start.sh"

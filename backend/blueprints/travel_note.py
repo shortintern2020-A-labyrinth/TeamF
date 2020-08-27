@@ -229,6 +229,7 @@ def get_details(travel_note_id):
       "lat": travel_detail.lat,
       "lng": travel_detail.lng,
       "description": travel_detail.description,
+      "hotel_no": travel_detail.hotel_no
     }
 
     image_objects = travel_detail.travel_detail_images
