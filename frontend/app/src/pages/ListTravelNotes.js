@@ -45,7 +45,8 @@ export default function ListTravelNotes(props) {
             .catch(e => {
                 console.error(e);
             })
-    }, [offset, country, params]);
+    // eslint-disable-next-line
+    }, [offset, country]); 
 
     return (
         <Box my={10} mx={30}>
