@@ -204,7 +204,7 @@ class TestCreateAPI(BaseTestCase):
     )
     self.assert_status(response2, 400)
 
-'''
+
   def test_invalid_date_param(self):
     # まずはsignup
     test_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
@@ -232,13 +232,13 @@ class TestCreateAPI(BaseTestCase):
         country='日本',
         city='千葉',
         start_date=1600000000,
-        end_date=1599000000,
+        end_date=1000000000,
         travel_details=[]
       )),
       content_type='application/json'
     )
-    self.assert_status(response2, 400)
     print(response2.json)
+    self.assert_status(response2, 400)
 
   def test_create_param(self):
     test_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
@@ -286,4 +286,3 @@ class TestCreateAPI(BaseTestCase):
     )
     self.assert_status(response2, 201)
     print(response2.json)
-'''

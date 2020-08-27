@@ -184,7 +184,11 @@ def create():
     insert_travel_details(travel_note.id, user_id,
                           user_name, travel_details)
     db.session.commit()
-    move_image()
+    # for test: ファイルが存在するなら変えない
+    if os.path.exists(image_path):
+      os.remove(tmp_path)
+    else:
+      move_image()
   except Exception as e:
     logger.warn(e)
     db.session.rollback()
