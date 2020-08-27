@@ -2,6 +2,7 @@
 import React from 'react';
 import { Container, Typography, Card } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import UserIcon from './UserIcon';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,14 +23,14 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Comment({ body, likes }) {
+export default function Comment({ body, likes, user_name, created_date }) {
     const classes = useStyles();
 
     return (
         <Card className={classes.root} variant="outlined">
             <div className={classes.info}>
-                {/* <UserIcon name="tanaka" /> */}
-                {/* <Typography className={classes.date}>2020/11/20 18:69</Typography> */}
+                <UserIcon name={user_name} />
+                <Typography className={classes.date}>{created_date ? created_date : "コメント日"}</Typography>
             </div>
             <Container className={classes.comment}>
                 <Typography>{body ? body : "コメント"}</Typography>
