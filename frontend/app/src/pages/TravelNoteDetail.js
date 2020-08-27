@@ -1,16 +1,15 @@
 // Editor: Satoshi Moro
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Avatar, Grid, Typography, Box, Container, TextField } from '@material-ui/core';
+import { Button, Grid, Typography, Box, Container, TextField } from '@material-ui/core';
 import RoomIcon from '@material-ui/icons/Room';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import InstagramIcon from '@material-ui/icons/Instagram';
 import Memory from '../components/Memory';
 import NoImage from '../assets/images/no_image.png';
-import CommentList from '../components/CommentList';
-import UserIcon from '../components/UserIcon';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
+import User from './User';
+import Comment from '../components/Comment';
+
 import { get } from './ListTravelNotes';
 
 const useStyles = makeStyles((theme) => ({
@@ -62,6 +61,13 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         width: '100%'
     },
+    comment: {
+        width: '40vw',
+    },
+    commentButton: {
+        marginTop: theme.spacing(2),
+
+    }
 }));
 
 const existTravelNote = (location) => {
@@ -72,6 +78,50 @@ export default function TravelNoteDetail(props) {
     const classes = useStyles();
     const { travel_note_id } = useParams();
     const [memories, setMemories] = useState([]);
+    const [comments, setComments] = useState([]);
+    const [commentInput, setCommentInput] = useState('');
+    const [reloading, setReloading] = useState(false);
+
+    const isLoggedIn = User.getLocalStorage("isLoggedIn");
+    const history = useHistory();
+
+
+
+    async function postData(endpoint = "", params = {}) {
+        const url = "http://localhost:4000" + endpoint;
+
+        const token = User.getLocalStorage("token");
+
+        if (!token) {
+            history.push("/Login");
+        }
+
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(params),
+        });
+
+        if (response.status === 401) {
+            history.push("/Login");
+        }
+
+        return response.json();
+    }
+
+    useEffect(() => {
+        get(`http://localhost:4000/travel_note/${travel_note_id}/comments`)
+            .then(res => {
+                setComments(res.comments);
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }, [reloading, travel_note_id]);
 
     useEffect(() => {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
@@ -138,7 +188,7 @@ export default function TravelNoteDetail(props) {
                             <Typography className={classes.spacing}>{country && city ? `${country} ${city}` : "国名 都市名"}</Typography>
                         </Grid>
                         <Grid item xs={4} className={classes.user}>
-                            <UserIcon name={""} />
+                            <Typography>usernameを入れる</Typography>
                         </Grid>
                     </Grid>
                 </Container>
@@ -151,38 +201,57 @@ export default function TravelNoteDetail(props) {
                             />
                         );
                     })}
-                    <Typography variant="h6" className={classes.share}>
-                        外部アカウントでシェアする
-                        </Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.buttonTwitter}
-                    >
-                        <TwitterIcon />
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.buttonInstagram}
-                    >
-                        <InstagramIcon />
-                    </Button>
                 </Container>
-                <Box mt={5}>
+                <Box m={6}>
                     <Container maxWidth="md">
-                        <div className={classes.form}>
-                            <Avatar >H</Avatar>
-                            <TextField
-                                className={classes.spacing}
-                                id="outlined-multiline-static"
-                                label="Comment here."
-                                multiline
-                                rows={4}
-                                variant="outlined"
-                            />
-                        </div>
-                        <CommentList />
+                        {isLoggedIn !== "false" ?
+                            <div>
+                                <div className={classes.form}>
+                                    <form>
+                                        <TextField
+                                            className={classes.comment}
+                                            id="outlined-multiline-static"
+                                            name="comment"
+                                            label="コメント"
+                                            multiline
+                                            rows={4}
+                                            variant="outlined"
+                                            value={commentInput}
+                                            onChange={(e) => setCommentInput(e.target.value)}
+                                        />
+                                    </form>
+                                </div>
+                                <Button
+                                    className={classes.commentButton}
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => {
+                                        if (commentInput === "") {
+                                            return;
+                                        }
+                                        postData(`/travel_note/${travel_note_id}/comment/create`, {
+                                            travel_note_id,
+                                            body: commentInput,
+                                        }).then((res) => {
+                                            setReloading(!reloading);
+                                            setCommentInput("");
+                                        });
+                                    }}
+                                >
+                                    投稿
+                            </Button>
+                            </div> :
+                            <Button
+                                className={classes.commentButton}
+                                variant="contained"
+                                color="primary"
+                                component={Link}
+                                to="/Login"
+                            >
+                                ログインしてコメントする
+                            </Button>
+                        }
+                        {comments.map(comment => <Comment key={comment.id} {...comment} />)}
                     </Container>
                 </Box>
             </Box>
