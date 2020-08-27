@@ -12,7 +12,7 @@ export default function UserPage() {
   const [travelNotes, setTravelNotes] = useState([]);
 
   const getTravelNotes = async () => {
-    await fetch(`http://localhost:4000/user/${user_id}`, {
+    await fetch(`https://rakuten-intern-backend.herokuapp.com/user/${user_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

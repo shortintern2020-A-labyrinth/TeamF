@@ -1,7 +1,7 @@
 # shintaro ichikawa
 
-from app.database import db
-from app.models import TravelNote, User, TravelDetail, TravelDetailImage, TravelLike
+from ..database import db
+from ..models import TravelNote, User, TravelDetail, TravelDetailImage, TravelLike
 from flask import jsonify, Blueprint, request
 import logging
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -14,8 +14,8 @@ import datetime
 travel_note = Blueprint('travel_note', __name__)
 logger = logging.getLogger('app')
 
-tmp_dir = "./images/tmp"
-images_dir = "./images"
+tmp_dir = "./app/images/tmp"
+images_dir = "./app/images"
 
 @travel_note.route('/travel_note/test')
 def index():
@@ -42,12 +42,16 @@ def save_image(b64_string, file_name):
 def load_image(path):
   extention = path.split('.', 1)[1]
   ret = f"data:image/{extention};base64,"
-  with open(path, "rb") as f:
-    img_binary = f.read()
-    b64_binary = base64.b64encode(img_binary)
-    b64_string = b64_binary.decode('utf-8')
-    ret += b64_string
-  return ret
+  try:
+    with open(path, "rb") as f:
+      img_binary = f.read()
+      b64_binary = base64.b64encode(img_binary)
+      b64_string = b64_binary.decode('utf-8')
+      ret += b64_string
+    return ret
+  except Exception as e:
+    logger.warn(e)
+    return ""
 
 def move_image():
   tmp = f"{tmp_dir}/*"
@@ -94,7 +98,7 @@ def insert_travel_images(travel_detail_id, user_name, travel_images):
     tmp_path = f"{tmp_dir}/detail_{travel_detail_id}_{i}.{extention}"
     img_path = f"{images_dir}/detail_{travel_detail_id}_{i}.{extention}"
     travel_images_to_insert.append(TravelDetailImage(
-      travel_detail_id, img_path, user_name, user_name))
+      travel_detail_id, travel_images[i], user_name, user_name))
     try:
       save_image(b64_string, tmp_path)
     except Exception as e:
@@ -165,11 +169,12 @@ def create():
         User.user_name).filter(User.id == user_id).one()
   except Exception as e:
     logger.warn(e)
+    raise e
     return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
 
   #insert TravelNote
   image_path = ""
-  travel_note = TravelNote(user_id, title, image_path, user_name, user_name,
+  travel_note = TravelNote(user_id, title, image, user_name, user_name,
                             description, country, city, start_date, end_date)
 
   if os.path.exists(tmp_dir):
@@ -181,7 +186,8 @@ def create():
     db.session.flush()
   except Exception as e:
     logger.warn(e)
-    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+    raise e
+    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error add"}), 500
 
   #save thumbnail
   b64_string, _, extention = get_image_from_b64(image)
@@ -189,7 +195,7 @@ def create():
   image_path = f"{images_dir}/thumbnail_{travel_note.id}.{extention}"
   try:
     save_image(b64_string, tmp_path)
-    travel_note.image_path = image_path
+    #travel_note.image = image
     #insert travel_details
     insert_travel_details(travel_note.id, user_id,
                           user_name, travel_details)
@@ -202,7 +208,8 @@ def create():
   except Exception as e:
     logger.warn(e)
     db.session.rollback()
-    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error"}), 500
+    raise e
+    return jsonify({"mode": "travel_note/create", "status": "internal_server_error", "message": "Internal server error save img"}), 500
   finally:
     db.session.close()
 
@@ -235,9 +242,9 @@ def get_details(travel_note_id):
     image_objects = travel_detail.travel_detail_images
     images = []
     for image_object in image_objects:
-      image_path = image_object.path
-      image = load_image(image_path)
-      images.append(image)
+      #image_path = image_object.path
+      #image = load_image(image_path)
+      images.append(image_object.image)
 
     obj["images"] = images
     ret.append(obj)
@@ -294,12 +301,14 @@ def get_all():
       "end_date": travel_note.end_date.strftime("%Y年%m月%d日"),
       "likes": likes,
       "user_id": user.id,
-      "user_name": user.user_name
+      "user_name": user.user_name,
+      "image": travel_note.image
     }
-
+    '''
     image_path = travel_note.image_path
     image = load_image(image_path)
     obj["image"] = image
+    '''
     ret.append(obj)
 
   return jsonify(ret), 200

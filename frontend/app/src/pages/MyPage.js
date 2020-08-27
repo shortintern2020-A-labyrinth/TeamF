@@ -12,7 +12,7 @@ export default function MyPage() {
 
   const getMyTravelNotes = async () => {
     const token = localStorage.getItem('token');
-    await fetch('http://localhost:4000/mypage', {
+    await fetch('https://rakuten-intern-backend.herokuapp.com/mypage', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

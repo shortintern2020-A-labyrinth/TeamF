@@ -1,5 +1,5 @@
 # shintaro ichikawa
-from app.database import db
+from ..database import db
 
 
 class DirectMessage(db.Model):
@@ -12,10 +12,10 @@ class DirectMessage(db.Model):
   body = db.Column(db.String(255), nullable=False)
   created_by = db.Column(db.String(255), nullable=False)
   created_date = db.Column(
-      db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+      db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
-      db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+      db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
 
   def __init__(self, sender_id, receiver_id, body, created_by, modified_by):
     self.sender_id = sender_id

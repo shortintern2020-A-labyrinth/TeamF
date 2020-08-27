@@ -89,7 +89,7 @@ export default function TravelNoteDetail(props) {
 
 
     async function postData(endpoint = "", params = {}) {
-        const url = "http://localhost:4000" + endpoint;
+        const url = "https://rakuten-intern-backend.herokuapp.com" + endpoint;
 
         const token = User.getLocalStorage("token");
 
@@ -115,7 +115,7 @@ export default function TravelNoteDetail(props) {
     }
 
     useEffect(() => {
-        get(`http://localhost:4000/travel_note/${travel_note_id}/comments`)
+        get(`https://rakuten-intern-backend.herokuapp.com/travel_note/${travel_note_id}/comments`)
             .then(res => {
                 setComments(res.comments);
             })
@@ -125,14 +125,14 @@ export default function TravelNoteDetail(props) {
     }, [reloading, travel_note_id]);
 
     useEffect(() => {
-        get(`http://localhost:4000/travel_note/${travel_note_id}`)
+        get(`https://rakuten-intern-backend.herokuapp.com/travel_note/${travel_note_id}`)
             .then(res => {
                 const promises = [];
                 for (const r of res) {
                     if (r.hotel_no) {
                         promises.push(
                             new Promise((resolve, reject) => {
-                                get(`http://localhost:4000/hotel/${r.hotel_no}`)
+                                get(`https://rakuten-intern-backend.herokuapp.com/hotel/${r.hotel_no}`)
                                     .then(res2 => {
                                         r.hotel_detail = res2;
                                         resolve();

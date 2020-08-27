@@ -1,5 +1,5 @@
 # shintaro ichikawa
-from app.database import db
+from ..database import db
 
 
 class TravelNote(db.Model):
@@ -9,25 +9,25 @@ class TravelNote(db.Model):
       'users.id', ondelete="cascade", onupdate="cascade"), nullable=False)
   title = db.Column(db.String(255), nullable=False)
   description = db.Column(db.Text)
-  image_path = db.Column(db.String(255), nullable=False)
+  image = db.Column(db.Text, nullable=False)
   country = db.Column(db.String(50))
   city = db.Column(db.String(100))
   start_date = db.Column(db.Date)
   end_date = db.Column(db.Date)
   created_by = db.Column(db.String(255), nullable=False)
   created_date = db.Column(
-      db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+      db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
-      db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+      db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   travel_details = db.relationship('TravelDetail', backref='travel_notes', cascade="all")
   travel_likes = db.relationship('TravelLike', backref='travel_notes', cascade="all")
   comments = db.relationship('Comment', backref='travel_notes', cascade="all")
 
-  def __init__(self, user_id, title, image_path, created_by, modified_by, description=None, country=None, city=None, start_date=None, end_date=None):
+  def __init__(self, user_id, title, image, created_by, modified_by, description=None, country=None, city=None, start_date=None, end_date=None):
     self.user_id = user_id
     self.title = title
-    self.image_path = image_path
+    self.image = image
     self.created_by = created_by
     self.modified_by = modified_by
     self.description = description

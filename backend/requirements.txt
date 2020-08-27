@@ -1,5 +1,6 @@
 flask
 pymysql
+psycopg2
 flask-sqlalchemy
 flask-migrate
 flask_jwt_extended
@@ -7,3 +8,4 @@ bcrypt
 pytest
 flask_testing
 flask_cors
+gunicorn==19.9.0

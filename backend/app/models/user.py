@@ -1,5 +1,5 @@
 # shintaro ichikawa
-from app.database import db
+from ..database import db
 
 
 class User(db.Model):
@@ -14,10 +14,10 @@ class User(db.Model):
   travel_countries = db.Column(db.Integer, nullable=False, server_default="0")
   created_by = db.Column(db.String(255), nullable=False)
   created_date = db.Column(
-    db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+    db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
-    db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+    db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   travel_notes = db.relationship('TravelNote', backref='users', cascade="all")
   travel_likes = db.relationship('TravelLike', backref='users', cascade="all")
   comments = db.relationship('Comment', backref='users', cascade="all")

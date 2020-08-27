@@ -4,8 +4,8 @@ from flask import jsonify, Blueprint
 import logging
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app.database import db
-from app.models import *
+from ..database import db
+from ..models import *
 
 import base64
 
@@ -15,12 +15,16 @@ logger = logging.getLogger('app')
 def load_image(path):
   extention = path.split('.', 1)[1]
   ret = f"data:image/{extention};base64,"
-  with open(path, "rb") as f:
-    img_binary = f.read()
-    b64_binary = base64.b64encode(img_binary)
-    b64_string = b64_binary.decode('utf-8')
-    ret += b64_string
-  return ret
+  try:
+    with open(path, "rb") as f:
+      img_binary = f.read()
+      b64_binary = base64.b64encode(img_binary)
+      b64_string = b64_binary.decode('utf-8')
+      ret += b64_string
+    return ret
+  except Exception as e:
+    logger.warn(e)
+    return ""
 
 @user.route('/user/test')
 def index():
@@ -58,12 +62,15 @@ def user_detail(user_id):
         "city": tn.city,
         "start_date": tn.start_date.strftime("%Y年%m月%d日"),
         "end_date": tn.end_date.strftime("%Y年%m月%d日"),
-        "likes": likes
+        "likes": likes,
+        "image": tn.image,
       }
+      '''
       image_path = tn.image_path
       image = load_image(image_path)
       obj["image"] = image
       travel_notes.append(obj)
+      '''
   except Exception as e:
     logger.warn(e)
     raise e
@@ -104,11 +111,14 @@ def mypage():
         "city": tn.city,
         "start_date": tn.start_date.strftime("%Y年%m月%d日"),
         "end_date": tn.end_date.strftime("%Y年%m月%d日"),
-        "likes": likes
+        "likes": likes,
+        "image": tn.image
       }
+      '''
       image_path = tn.image_path
       image = load_image(image_path)
       obj["image"] = image
+      '''
       travel_notes.append(obj)
   except Exception as e:
     logger.warn(e)

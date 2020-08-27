@@ -159,7 +159,7 @@ export default function CreateTravelNote(props) {
   };
 
   async function postData(endpoint = "", params = {}) {
-    const url = "http://localhost:4000" + endpoint;
+    const url = "https://rakuten-intern-backend.herokuapp.com" + endpoint;
     const token = localStorage.getItem("token");
     if (!token) {
       props.history.push({ pathname: "/Login" });

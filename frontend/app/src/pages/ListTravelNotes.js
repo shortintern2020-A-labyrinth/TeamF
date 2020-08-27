@@ -43,7 +43,7 @@ export default function ListTravelNotes(props) {
     }
     useEffect(() => {
         window.scrollTo(0, 0);
-        get('http://localhost:4000/travel_notes', params)
+        get('https://rakuten-intern-backend.herokuapp.com/travel_notes', params)
             .then(res => {
                 setTravelNotes(res);
             })

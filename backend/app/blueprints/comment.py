@@ -1,8 +1,8 @@
 # Shintaro Ichikawa
 from flask import jsonify, Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models import User, Comment, TravelNote
-from app.database import db
+from ..models import User, Comment, TravelNote
+from ..database import db
 import logging
 
 comment = Blueprint('comment', __name__)

@@ -15,7 +15,7 @@ class User {
   };
 
   signup = async (email, password, name) => {
-    await fetch('http://localhost:4000/signup', {
+    await fetch('https://rakuten-intern-backend.herokuapp.com/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ class User {
   };
 
   signin = async (email, password) => {
-    await fetch('http://localhost:4000/signin', {
+    await fetch('https://rakuten-intern-backend.herokuapp.com/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

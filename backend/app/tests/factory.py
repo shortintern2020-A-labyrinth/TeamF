@@ -3,8 +3,8 @@
 from flask import jsonify
 import logging
 import bcrypt
-from app.database import db
-from app.models import *
+from ..database import db
+from ..models import *
 import base64
 import os
 import glob

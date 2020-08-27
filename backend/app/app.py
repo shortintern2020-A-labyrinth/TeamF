@@ -2,6 +2,7 @@ import logging
 import logging.handlers
 import datetime
 import click
+import sys
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -12,6 +13,7 @@ from .seeder import register_commands
 
 app=Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 28799
 app.config.from_object('app.config.Config')
 # 各々の環境で変える
 app.config['JWT_SECRET_KEY'] = 'aqwsedrftgyhujkil'
@@ -19,12 +21,14 @@ jwt = JWTManager(app)
 CORS(app)
 
 handler = logging.handlers.RotatingFileHandler(
-    f"logs/log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log", "a+", maxBytes=3000, backupCount=5)
+    f"./app/logs/log_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log", "a+", maxBytes=3000, backupCount=5)
 handler.setLevel(logging.WARN)
 handler.setFormatter(logging.Formatter(
     '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
 logger = logging.getLogger('app')
 logger.addHandler(handler)
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 
 # travel_note周りの実装
 app.register_blueprint(travel_note, url_prefix="/")

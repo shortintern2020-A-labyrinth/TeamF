@@ -1,5 +1,5 @@
 # shintaro ichikawa
-from app.database import db
+from ..database import db
 
 
 class TravelDetail(db.Model):
@@ -14,10 +14,10 @@ class TravelDetail(db.Model):
   lng = db.Column(db.Float)
   created_by = db.Column(db.String(255), nullable=False)
   created_date = db.Column(
-      db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+      db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   modified_by = db.Column(db.String(255), nullable=False)
   modified_date = db.Column(
-      db.DateTime, server_default=db.func.current_timestamp(), server_onupdate=db.func.current_timestamp(), nullable=False)
+      db.DateTime, server_default="2020-08-01", server_onupdate="2020-08-01", nullable=False)
   travel_detail_images = db.relationship('TravelDetailImage', backref='travel_details', cascade="all")
 
 

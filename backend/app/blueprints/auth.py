@@ -8,8 +8,8 @@ from flask_jwt_extended import (
   JWTManager
 )
 import bcrypt
-from app.database import db
-from app.models import *
+from ..database import db
+from ..models import *
 import datetime
 
 auth = Blueprint('auth', __name__)
