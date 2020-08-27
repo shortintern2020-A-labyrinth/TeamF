@@ -28,7 +28,7 @@ class User {
     })
       .then((response) => {
         if(response.status === 401){
-          alert('認証に失敗しました。メールアドレスとパスワードをご確認ください。');
+          alert('認証に失敗しました。');
         }
         else if(response.status !== 201){
           alert('送信に失敗しました');
