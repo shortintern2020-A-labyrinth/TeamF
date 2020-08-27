@@ -1,5 +1,5 @@
 //Written by Lisa Shinoda
-import React, { memo } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -7,8 +7,8 @@ import FormControl from "@material-ui/core/FormControl";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import MemoryForm from "../components/MemoryForm";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
+import Grid from "@material-ui/core/Grid";
+import NoImage from "../assets/images/no_image.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,20 +73,24 @@ const useStyles = makeStyles((theme) => ({
   removeButton: {
     height: "50%",
   },
+  imageContainer: {
+    "& > *": {
+      padding: theme.spacing(1),
+    },
+    margin: theme.spacing(3),
+    height: "15vh",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    height: "100%",
+  },
 }));
 
 export default function BasicTextFields() {
   const classes = useStyles();
-  //   const [state, setState] = React.useState({
-  //     title: '',
-  //     country: '',
-  //     city:'',
-  //     description: '',
-  //     start_date: 0,
-  //     end_date: 0,
-  //     name: 'hai',
-  //     memories: []
-  //   });
 
   // Author: Shitaro Ichikawa -------------------------
   const [title, setTitle] = React.useState("");
@@ -97,18 +101,9 @@ export default function BasicTextFields() {
   const [endDate, setEndDate] = React.useState("");
   const [memories, setMemories] = React.useState([]);
   const [cnt, setCnt] = React.useState(0);
-  //   const handleChange = (event) => {
-  //     const name = event.target.name;
-  //     setState({
-  //       ...state,
-  //       [name]: event.target.value,
-  //     });
-  //   };
-
-  //   const [checked, setChecked] = React.useState(false);
 
   const createMemory = () => {
-    setCnt(cnt+1);
+    setCnt(cnt + 1);
     return {
       id: cnt,
       place: "",
@@ -145,8 +140,6 @@ export default function BasicTextFields() {
           <NativeSelect
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            // value={state.age}
-            // onChange={handleChange}
             inputProps={{
               name: "age",
               id: "age-native-label-placeholder",
@@ -207,6 +200,18 @@ export default function BasicTextFields() {
           onChange={(e) => setDescription(e.target.value)}
         />
       </form>
+      <Grid container justify="center" alignItems="center">
+        <Grid item xs={12}>
+          <p>表紙画像</p>
+        </Grid>
+        <Grid item xs={6} className={classes.imageContainer}>
+          <img className={classes.image} src={NoImage} alt="travel top" />
+          <Button variant="contained" color="primary" size="small">
+            Upload
+          </Button>
+        </Grid>
+        <Grid item xs={2}/>
+      </Grid>
       <h2>思い出の追加</h2>
       <div>
         {memories.map((e, index) => (
@@ -224,18 +229,6 @@ export default function BasicTextFields() {
                 setMemories([...memories]);
               }}
             />
-            {/* <IconButton
-              key={index}
-              className={classes.removeButton}
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                memories.splice(index, 1);
-                setMemories([...memories]);
-              }}
-            >
-              <DeleteIcon />
-            </IconButton> */}
           </div>
         ))}
       </div>
@@ -263,6 +256,7 @@ export default function BasicTextFields() {
               endDate,
               description,
               memories,
+              NoImage
             })
           }
         >
