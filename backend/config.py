@@ -1,3 +1,5 @@
+# Shintaro Ichikawa
+
 import os
 
 class DevelopmentConfig:
@@ -11,6 +13,8 @@ class DevelopmentConfig:
     }
   )
   SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# Makoto Naruse 
 
 class TestConfig:
 

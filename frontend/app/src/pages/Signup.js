@@ -16,7 +16,7 @@ export default function Signup(props) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+
   const doSignup = async (e) => {
     e.preventDefault();
       await User.signup(email, password, name);
