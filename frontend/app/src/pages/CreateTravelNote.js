@@ -87,6 +87,9 @@ const useStyles = makeStyles((theme) => ({
   image: {
     height: "100%",
   },
+  hiddenInput: {
+    display: "none",
+  },
 }));
 
 export default function BasicTextFields() {
@@ -98,9 +101,11 @@ export default function BasicTextFields() {
   const [city, setCity] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
+  const [image, setImage] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
   const [memories, setMemories] = React.useState([]);
   const [cnt, setCnt] = React.useState(0);
+  const ref = React.createRef();
 
   const createMemory = () => {
     setCnt(cnt + 1);
@@ -112,6 +117,20 @@ export default function BasicTextFields() {
       description: "",
       images: [],
     };
+  };
+
+  const uploadImage = () => {
+    const input = ref.current;
+    input.click();
+  };
+
+  const loadImage = (e) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target.result;
+      setImage(result);
+    };
+    reader.readAsDataURL(e.target.files[0]);
   };
 
   const handleMemory = (index) => (field, value) => {
@@ -205,12 +224,21 @@ export default function BasicTextFields() {
           <p>表紙画像</p>
         </Grid>
         <Grid item xs={6} className={classes.imageContainer}>
-          <img className={classes.image} src={NoImage} alt="travel top" />
-          <Button variant="contained" color="primary" size="small">
+          <img
+            className={classes.image}
+            src={image ? image : NoImage}
+            alt="travel top"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={uploadImage}
+          >
             Upload
           </Button>
         </Grid>
-        <Grid item xs={2}/>
+        <Grid item xs={2} />
       </Grid>
       <h2>思い出の追加</h2>
       <div>
@@ -256,13 +284,20 @@ export default function BasicTextFields() {
               endDate,
               description,
               memories,
-              NoImage
+              image
             })
           }
         >
           投稿
         </Button>
       </div>
+      <input
+        type="file"
+        className={classes.hiddenInput}
+        ref={ref}
+        accept="image/png,image/jpeg"
+        onChange={(e) => loadImage(e)}
+      />
     </div>
   );
 }
