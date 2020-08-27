@@ -229,7 +229,7 @@ def get_details(travel_note_id):
 
 @travel_note.route('/travel_notes', methods=["GET"])
 def get_all():
-  place = request.args.get("place", default=None, type=str)
+  country = request.args.get("country", default=None, type=str)
   start_date = request.args.get("start_date", default=None, type=int)
   end_date = request.args.get("end_date", default=None, type=int)
   limit = request.args.get("limit", default=None, type=int)
@@ -240,8 +240,8 @@ def get_all():
 
   try:
     query = TravelNote.query.order_by(TravelNote.id.desc())
-    if place is not None:
-      query = query.filter(TravelNote.place == place)
+    if country is not None:
+      query = query.filter(TravelNote.country == country)
 
     if (start_date is not None) and (end_date is not None):
       query = query.filter(TravelNote.start_date.between(start_date, end_date))
