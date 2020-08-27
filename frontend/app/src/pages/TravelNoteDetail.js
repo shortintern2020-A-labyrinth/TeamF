@@ -112,7 +112,6 @@ export default function TravelNoteDetail(props) {
             .catch(e => {
                 console.error(e);
             });
-        return () => { setReloading(false) };
     }, [reloading, travel_note_id]);
 
     useEffect(() => {
@@ -192,7 +191,7 @@ export default function TravelNoteDetail(props) {
                                             travel_note_id,
                                             body: commentInput,
                                         }).then((res) => {
-                                            setReloading(true);
+                                            setReloading(!reloading);
                                             setCommentInput("");
                                         });
                                     }}
