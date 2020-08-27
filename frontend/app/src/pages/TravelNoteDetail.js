@@ -73,7 +73,30 @@ export default function TravelNoteDetail(props) {
     useEffect(() => {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
             .then(res => {
-                setMemories(res);
+                const promises = [];
+                for(const r of res) {
+                    if(r.hotel_no) {
+                        promises.push(
+                            new Promise((resolve, reject) => {
+                                get(`http://localhost:4000/hotel/${r.hotel_no}`)
+                                    .then(res2 => {
+                                        r.hotel_detail = res2;
+                                        resolve();
+                                    })
+                                    .catch(e1 => {
+                                        console.error(e1);
+                                        reject(e1);
+                                    })
+                            })
+                        );
+                    }
+                }
+                Promise.all(promises).then(() => {
+                    setMemories([...res]);
+                })
+                .catch(e => {
+                    console.error(e);
+                })
             })
             .catch(e => {
                 console.error(e);
