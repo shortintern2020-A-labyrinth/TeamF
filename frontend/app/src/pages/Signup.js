@@ -21,7 +21,8 @@ export default function Signup(props) {
     e.preventDefault();
       await User.signup(email, password, name);
       if(localStorage.getItem('isLoggedIn') === 'true'){
-        props.history.push({ pathname: '/' });
+        props.screenProps.setLoginStatus(true);
+        props.screenProps.history.push({ pathname: '/' });
       }
   };
 
@@ -79,6 +80,7 @@ export default function Signup(props) {
             }}
           />
           <Button
+            type='submit'
             fullWidth
             variant="contained"
             color="primary"
