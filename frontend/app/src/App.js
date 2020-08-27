@@ -16,7 +16,7 @@ import Auth from './pages/Auth';
 import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
-const App = () => {
+const App = (props) => {
   const [loginStatus, setLoginStatus] = useState(null);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const App = () => {
     <div className="App">
       <Router>
         <ScrollToTop />
-        <Nav screenProps={{ loginStatus, setLoginStatus }} />
+        <Nav screenProps={{ loginStatus, setLoginStatus }} location={props.location}/>
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/TravelNotes" />} />
           <Route path="/TravelNotes" component={ListTravelNotes} />
