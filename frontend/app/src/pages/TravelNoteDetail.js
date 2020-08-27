@@ -91,6 +91,25 @@ export default function TravelNoteDetail(props) {
         return response.json();
     }
 
+    async function confirmToken(token) {
+        const url = "http://localhost:4000";
+
+        const response = await fetch(url, {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(params),
+        });
+
+        return response.json();
+    }
+    if (response.status === 401) {
+        props.history.push({ pathname: "/Login" });
+    }
+
     useEffect(() => {
         get(`http://localhost:4000/travel_note/${travel_note_id}`)
             .then(res => {
@@ -99,6 +118,13 @@ export default function TravelNoteDetail(props) {
             .catch(e => {
                 console.error(e);
             });
+
+        postData(`/travel_note/${travel_note_id}/comment/create`, {
+            travel_note_id,
+            body: commentInput,
+        }).then((res) => {
+            props.history.push({ pathname: "/" });
+        });
 
         if (!token) {
             setIsHidden(false);
