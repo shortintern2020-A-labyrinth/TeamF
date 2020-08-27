@@ -9,6 +9,7 @@ import base64
 import os
 import glob
 import shutil
+import datetime
 
 travel_note = Blueprint('travel_note', __name__)
 logger = logging.getLogger('app')
@@ -128,6 +129,8 @@ def create():
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
   if "image" not in request.json:
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
+  if "start_date" not in request.json or "end_date" not in request.json:
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400
 
   b64_string, types, extention = get_image_from_b64(request.json["image"])
   if types != "image":
@@ -136,17 +139,24 @@ def create():
   # get_parameters
   title = request.json["title"]
   image = request.json["image"]
+  start_date_unix = request.json["start_date"]
+  end_date_unix = request.json["end_date"]
   description = request.json.get("description", "")
   country = request.json.get("country", None)
   city = request.json.get("city", None)
-  start_date = request.json.get("start_date", None)
-  end_date = request.json.get("end_date", None)
 
   travel_details = request.json.get("travel_details", [])
 
   if not validate_travel_details(travel_details):
     return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400    
 
+  start_datetime = datetime.datetime.fromtimestamp(start_date_unix)
+  start_date = start_datetime.date()
+  end_datetime = datetime.datetime.fromtimestamp(end_date_unix)
+  end_date = end_datetime.date()
+
+  if start_date > end_date:
+    return jsonify({"mode": "travel_note/create", "status": "bad_request", "message": "There are invalid parameters"}), 400    
 
   # get user_name
   user_id = get_jwt_identity()
@@ -271,8 +281,8 @@ def get_all():
       "description": travel_note.description,
       "country": travel_note.country,
       "city": travel_note.city,
-      "start_date": travel_note.start_date,
-      "end_date": travel_note.end_date,
+      "start_date": travel_note.start_date.strftime("%Y年%m月%d日"),
+      "end_date": travel_note.end_date.strftime("%Y年%m月%d日"),
       "likes": likes
     }
 
