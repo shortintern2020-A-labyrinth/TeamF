@@ -55,7 +55,7 @@ const App = () => {
           <Route path="/TravelNote/:travel_note_id" component={TravelNoteDetail} />
           <Redirect exact from="/" to="/TravelNotes" />
           <Route path="/TravelNoteDetail" component={TravelNoteDetail} />
-          <Route path="/UserPage" component={UserPage} />
+          <Route path="/UserPage/:user_id" component={UserPage} />
           <Auth screenProps={{ loginStatus, setLoginStatus }}>
             <Route path="/CreateTravelNote" component={CreateTravelNote} />
             <Route path="/EditTravelNote" component={EditTravelNote} />
