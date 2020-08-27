@@ -46,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
   spacing: {
     marginLeft: theme.spacing(4),
   },
+  hiddenInput: {
+    display: "none",
+  },
 }));
 
 export default function MemoryForm(props) {
@@ -56,6 +59,23 @@ export default function MemoryForm(props) {
   const [lng, setLng] = React.useState(null);
   const [images, setImages] = React.useState([]);
   const [description, setDescription] = React.useState("");
+  const ref = React.createRef();
+
+  const uploadImage = () => {
+    const input = ref.current;
+    input.click();
+  };
+
+  const loadImage = (e) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target.result;
+      const newImages= [result];
+      setImages(newImages);
+      props.handleMemory("images", newImages);
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
 
   return (
     <div className={classes.container}>
@@ -69,10 +89,10 @@ export default function MemoryForm(props) {
             className={classes.spacing}
           >
             <Grid item>
-              <img className={classes.image} src={NoImage} alt="travel top" />
+              <img className={classes.image} src={images.length !== 0 ? images[0] : NoImage} alt="travel top" />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" onClick={uploadImage}>
                 Upload
               </Button>
             </Grid>
@@ -120,6 +140,13 @@ export default function MemoryForm(props) {
           </IconButton>
         </Grid>
       </Card>
+      <input
+        type="file"
+        className={classes.hiddenInput}
+        ref={ref}
+        accept="image/png,image/jpeg"
+        onChange={(e) => loadImage(e)}
+      />
     </div>
   );
 }

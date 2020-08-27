@@ -101,7 +101,7 @@ export default function BasicTextFields() {
   const [city, setCity] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
-  const [image, setImage] = React.useState("");
+  const [image, setImage] = React.useState(null);
   const [endDate, setEndDate] = React.useState("");
   const [memories, setMemories] = React.useState([]);
   const [cnt, setCnt] = React.useState(0);
