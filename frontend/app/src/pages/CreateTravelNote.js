@@ -9,6 +9,7 @@ import MemoryForm from "../components/MemoryForm";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import NoImage from "../assets/images/no_image.png";
+import Modal from "@material-ui/core/Modal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -95,9 +96,20 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: "solid black",
     width: "60%",
   },
+  modal: {
+    position: "absolute",
+    width: 400,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
-export default function BasicTextFields() {
+export default function CreateTravelNote(props) {
   const classes = useStyles();
 
   // Author: Shitaro Ichikawa -------------------------
@@ -110,6 +122,8 @@ export default function BasicTextFields() {
   const [endDate, setEndDate] = React.useState("");
   const [memories, setMemories] = React.useState([]);
   const [cnt, setCnt] = React.useState(0);
+  const [openError, setOpenError] = React.useState(false);
+  const [openParamError, setOpenParamError] = React.useState(false);
   const ref = React.createRef();
 
   const createMemory = () => {
@@ -142,10 +156,64 @@ export default function BasicTextFields() {
     memories[index][field] = value;
     setMemories([...memories]);
   };
+
+  async function postData(endpoint = "", params = {}) {
+    const url = "http://localhost:4000" + endpoint;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      props.history.push({ pathname: "/Login" });
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
+
+    if (response.status === 401) {
+      props.history.push({ pathname: "/Login" });
+    }
+    if (response.status !== 201) {
+      setOpenError(false);
+    }
+
+    return response.json();
+  }
+
   // -------------------------------------------------
 
   return (
     <div>
+      <Modal
+        disablePortal
+        disableEnforceFocus
+        disableAutoFocus
+        open={openError}
+        aria-labelledby="error-title"
+        aria-describedby="error-description"
+      >
+        <div className={classes.modal}>
+          <p>送信に失敗しました</p>
+          <Button onClick={() => setOpenError(false)}>閉じる</Button>
+        </div>
+      </Modal>
+      <Modal
+        disablePortal
+        disableEnforceFocus
+        disableAutoFocus
+        open={openParamError}
+        aria-labelledby="error-param-title"
+        aria-describedby="error-param-description"
+      >
+        <div className={classes.modal}>
+          <p>入力されていない項目があります</p>
+          <Button onClick={() => setOpenParamError(false)}>閉じる</Button>
+        </div>
+      </Modal>
       <h2 className={classes.title}>旅行記の作成</h2>
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
@@ -280,18 +348,30 @@ export default function BasicTextFields() {
         <Button
           variant="contained"
           color="primary"
-          onClick={() =>
-            console.log({
+          onClick={() => {
+            if (
+              image === null ||
+              startDate === "" ||
+              endDate === "" ||
+              title === ""
+            ) {
+              setOpenParamError(true);
+              return;
+            }
+
+            postData("/travel_note/create", {
               title,
               country,
               city,
-              startDate,
-              endDate,
+              startDate: new Date(startDate).getTime(),
+              endDate: new Date(endDate).getTime(),
               description,
               memories,
               image,
-            })
-          }
+            }).then((res) => {
+              props.history.push({ pathname: "/" });
+            });
+          }}
         >
           投稿
         </Button>

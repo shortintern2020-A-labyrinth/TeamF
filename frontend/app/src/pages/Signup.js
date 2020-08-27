@@ -9,8 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { useStyles as LoginStyles } from './Login';
 import SNSLogin from '../components/SNSLogin';
+import User from './User';
 
-export default function Signup() {
+export default function Signup(props) {
   const classes = LoginStyles();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,20 +19,13 @@ export default function Signup() {
 
   const doSignup = async (e) => {
     e.preventDefault();
-    fetch('http://localhost:4000/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        user_name: name,
-      }),
-    })
-      .then((res) => console.log('res', res))
-      .then((data) => console.log('data', data));
+      await User.signup(email, password, name);
+      if(localStorage.getItem('isLoggedIn') === 'true'){
+        props.screenProps.setLoginStatus(true);
+        props.screenProps.history.push({ pathname: '/' });
+      }
   };
+
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
@@ -86,6 +80,7 @@ export default function Signup() {
             }}
           />
           <Button
+            type='submit'
             fullWidth
             variant="contained"
             color="primary"
