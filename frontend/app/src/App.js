@@ -12,12 +12,14 @@ import EditTravelNote from './pages/EditTravelNote'
 import TravelNoteDetail from './pages/TravelNoteDetail'
 import MyPage from './pages/MyPage'
 import UserPage from './pages/UserPage'
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <Router>
+        <ScrollToTop />
         <Nav />
         <Route exact path="/" render={() => <Redirect to="/TravelNotes" />} />
         <Route path="/TravelNotes" component={ListTravelNotes} />

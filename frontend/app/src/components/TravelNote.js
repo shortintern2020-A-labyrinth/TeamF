@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         display: 'flex',
-        minHeight: '30vh'
+        height: '30vh'
     },
     image: {
         width: '40%',
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
     spacing: {
         marginRight: theme.spacing(4),
+        marginLeft: theme.spacing(1),
     }
 }));
 

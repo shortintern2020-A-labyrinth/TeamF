@@ -10,29 +10,27 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         marginTop: theme.spacing(4),
         padding: theme.spacing(2),
+        justifyContent: 'space-between',
+        height: '30vh',
     },
     content: {
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         alignItems: 'center',
         width: '40%',
     },
     icon: {
         width: '20%',
         margin: 'auto 0',
-        marginLeft: theme.spacing(2),
+        marginLeft: theme.spacing(4),
     },
     image: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '40%',
+        width: '30%',
     },
 }));
 
-export default function Memory() {
+export default function Memory({ place, images, description, lat, lng }) {
     const classes = useStyles();
     return (
         <Card className={classes.root}>
@@ -42,10 +40,10 @@ export default function Memory() {
                 </Avatar>
             </div>
             <div className={classes.content}>
-                <Typography variant="h6" color="primary">ディズニーランド</Typography>
-                <Typography>綺麗で楽しかった</Typography>
+                <Typography variant="h6" color="primary">{place ? place : "場所名"}</Typography>
+                <Typography>{description ? description : "説明"}</Typography>
             </div>
-            <img className={classes.image} src={NoImage} alt="memory" />
+            <img className={classes.image} src={images[0] ? images[0] : NoImage} alt="memory" />
         </Card>
     );
 };

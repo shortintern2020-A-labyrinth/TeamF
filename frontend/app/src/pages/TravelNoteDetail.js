@@ -1,8 +1,7 @@
 // Editor: Satoshi Moro
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Avatar, Grid, Typography, Box, Container, TextField } from '@material-ui/core';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import RoomIcon from '@material-ui/icons/Room';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import TwitterIcon from '@material-ui/icons/Twitter';
@@ -11,6 +10,8 @@ import Memory from '../components/Memory';
 import NoImage from '../assets/images/no_image.png';
 import CommentList from '../components/CommentList';
 import UserIcon from '../components/UserIcon';
+import { useParams } from 'react-router-dom';
+import { get } from './ListTravelNotes';
 
 const useStyles = makeStyles((theme) => ({
     abstract: {
@@ -61,30 +62,28 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         width: '100%'
     },
-    sizing: {
-
-    }
-
 }));
 
-const memories = [
-    {
-        id: 1,
-    },
-    {
-        id: 2,
-    },
-    {
-        id: 3,
-    }
-];
-
-export default function TravelNoteDetail() {
+export default function TravelNoteDetail(props) {
     const classes = useStyles();
+    const { travel_note_id } = useParams();
+    const [memories, setMemories] = useState([]);
+    const { title, start_date, end_date, country, city, image } = props.location.state.travelNote;
+    console.log(props.location.state.travelNote);
+
+    useEffect(() => {
+        get(`http://localhost:4000/travel_note/${travel_note_id}`)
+            .then(res => {
+                setMemories(res);
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }, [travel_note_id]);
 
     return (
         <>
-            <img className={classes.topImage} src={NoImage} alt="travel top" />
+            <img className={classes.topImage} src={image ? image : NoImage} alt="travel top" />
             <Box mt={5}>
                 <Container className={classes.abstract} maxWidth="md">
                     <Grid container spacing={2}>
@@ -93,30 +92,31 @@ export default function TravelNoteDetail() {
                                 variant="h4"
                                 align="left"
                             >
-                                旅行に行きました
-                        </Typography>
+                                {title ? title : "タイトル"}
+                            </Typography>
                         </Grid>
                         <Grid item xs={4} className={classes.date}>
                             <CalendarTodayIcon />
-                            <Typography className={classes.spacing}>2020/2/19~2020/2/22</Typography>
+                            <Typography className={classes.spacing}>{start_date && end_date ? `${start_date} ~ ${end_date}` : "start end"}</Typography>
                         </Grid>
                         <Grid item xs={4} className={classes.location}>
                             <RoomIcon />
-                            <Typography className={classes.spacing}>千葉県千葉市</Typography>
+                            <Typography className={classes.spacing}>{country && city ? `${country} ${city}` : "国名 都市名"}</Typography>
                         </Grid>
                         <Grid item xs={4} className={classes.user}>
-                            <UserIcon name={"takahashi"} />
+                            <UserIcon name={""} />
                         </Grid>
                     </Grid>
-                    <div className={classes.like}>
-                        <FavoriteIcon color="secondary" fontSize="large" />
-                        <span>11</span>
-                    </div>
                 </Container>
                 <Container className={classes.content} maxWidth="md">
-                    {memories.map(memory => (
-                        <Memory key={memory.id} />
-                    ))}
+                    {memories.map((memory, index) => {
+                        return (
+                            <Memory
+                                key={index}
+                                {...memory}
+                            />
+                        );
+                    })}
                     <Typography variant="h6" className={classes.share}>
                         外部アカウントでシェアする
                         </Typography>

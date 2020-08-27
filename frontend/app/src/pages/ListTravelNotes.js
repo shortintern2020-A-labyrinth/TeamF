@@ -24,9 +24,12 @@ export default function ListTravelNotes() {
     const [travelNotes, setTravelNotes] = useState([]);
     const [offset, setOffset] = useState(0);
     const limit = 5;
-    const onNextButtonClicked = () => { setOffset(offset + limit) };
+    const onNextButtonClicked = () => {
+        setOffset(offset + limit);
+    };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         get('http://localhost:4000/travel_notes', { offset, limit })
             .then(res => {
                 setTravelNotes(res);
