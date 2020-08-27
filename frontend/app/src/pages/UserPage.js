@@ -30,7 +30,7 @@ export default function UserPage() {
 
   useEffect(() => {
     getTravelNotes();
-  });
+  }, [user_id]);
 
   return (
     <Box my={10} mx={5}>
@@ -50,19 +50,19 @@ export default function UserPage() {
               </Typography>
             </Box>
           ) : (
-            travelNotes.map((travelNote) => (
-              <Link
-                key={travelNote.id}
-                to={{
-                  pathname: `/TravelNote/${travelNote.id}`,
-                  state: { travelNote },
-                }}
-                style={{ textDecoration: 'none' }}
-              >
-                <TravelNote {...travelNote} />
-              </Link>
-            ))
-          )}
+              travelNotes.map((travelNote) => (
+                <Link
+                  key={travelNote.id}
+                  to={{
+                    pathname: `/TravelNote/${travelNote.id}`,
+                    state: { travelNote },
+                  }}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <TravelNote {...travelNote} />
+                </Link>
+              ))
+            )}
         </Grid>
       </Grid>
     </Box>

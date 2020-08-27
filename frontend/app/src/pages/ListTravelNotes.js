@@ -26,13 +26,13 @@ export default function ListTravelNotes(props) {
     const [travelNotes, setTravelNotes] = useState([]);
     const [offset, setOffset] = useState(0);
     const limit = 5;
-    const { country } = props.location.state;
+    const country = props.location.state;
     const onNextButtonClicked = () => {
         setOffset(offset + limit);
     };
 
     var params = {};
-    if( country && country !== "世界" ){
+    if (country && country !== "世界") {
         params = { offset, limit, country };
     } else {
         params = { offset, limit }
@@ -46,8 +46,8 @@ export default function ListTravelNotes(props) {
             .catch(e => {
                 console.error(e);
             })
-    // eslint-disable-next-line
-    }, [offset, country]); 
+        // eslint-disable-next-line
+    }, [offset, country]);
 
     return (
         <Box my={10} mx={30}>
