@@ -1,4 +1,4 @@
-// Editor: Satoshi Moro
+// Makoto Naruse
 import React from 'react';
 import RoomIcon from '@material-ui/icons/Room';
 import ListItem from '@material-ui/core/ListItem';
