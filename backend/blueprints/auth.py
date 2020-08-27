@@ -10,6 +10,7 @@ from flask_jwt_extended import (
 import bcrypt
 from app.database import db
 from app.models import *
+import datetime
 
 auth = Blueprint('auth', __name__)
 logger = logging.getLogger('app')
@@ -36,7 +37,8 @@ def signup():
       user = User(email=email, password=hashed_pass, provider="email", user_name=user_name, created_by=user_name, modified_by=user_name)
       db.session.add(user)
       db.session.commit()
-      access_token = create_access_token(identity=user.id)
+      expires = datetime.timedelta(days=7)
+      access_token = create_access_token(identity=user.id, expires_delta=expires)
     except Exception as e:
       logger.warn(e)
       db.session.rollback()
@@ -68,7 +70,8 @@ def signin():
   finally:
     db.session.close()
 
-  access_token = create_access_token(identity=user.id)
+  expires = datetime.timedelta(days=7)
+  access_token = create_access_token(identity=user.id, expires_delta=expires)
   return jsonify(access_token=access_token), 200
 
 @auth.route("/protected", methods=["GET"])
