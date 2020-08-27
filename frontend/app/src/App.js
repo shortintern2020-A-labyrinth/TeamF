@@ -1,5 +1,5 @@
 // Author: Kota Ikehara
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Login from './pages/Login';
@@ -15,24 +15,46 @@ import UserPage from './pages/UserPage';
 import Auth from './pages/Auth';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [loginStatus, setLoginStatus] = useState(null);
+
+  useEffect(() => {
+    // check if user is logged in (device is present with a token)
+    async function checkToken() {
+      const token = await localStorage.getItem('token');
+      if (token) {
+        setLoginStatus(true);
+      } else {
+        setLoginStatus(false);
+      }
+    }
+    checkToken();
+  }, []);
+
   return (
     <div className="App">
       <Router>
-        <Nav />
+        <Nav screenProps={{ loginStatus, setLoginStatus }} />
         <Switch>
           <Route exact path="/" component={ListTravelNotes} />
-          <Route  path="/Login" component={Login} />
-          <Route  path="/Signup" component={Signup} />
-          <Route  path="/TravelNoteDetail" component={TravelNoteDetail} />
-          <Route  path="/UserPage" component={UserPage} />
-          <Auth>
-            <Route
-              path="/CreateTravelNote"
-              component={CreateTravelNote}
-            />
-            <Route  path="/EditTravelNote" component={EditTravelNote} />
-            <Route  path="/MyPage" component={MyPage} />
+          <Route
+            path="/Login"
+            render={(props) => (
+              <Login screenProps={{ ...props, loginStatus, setLoginStatus }} />
+            )}
+          />
+          <Route
+            path="/Signup"
+            render={(props) => (
+              <Signup screenProps={{ ...props, loginStatus, setLoginStatus }} />
+            )}
+          />
+          <Route path="/TravelNoteDetail" component={TravelNoteDetail} />
+          <Route path="/UserPage" component={UserPage} />
+          <Auth screenProps={{ loginStatus, setLoginStatus }}>
+            <Route path="/CreateTravelNote" component={CreateTravelNote} />
+            <Route path="/EditTravelNote" component={EditTravelNote} />
+            <Route path="/MyPage" component={MyPage} />
           </Auth>
           <Box mt={8}>
             <Copyright />
@@ -41,6 +63,6 @@ function App() {
       </Router>
     </div>
   );
-}
+};
 
 export default App;
