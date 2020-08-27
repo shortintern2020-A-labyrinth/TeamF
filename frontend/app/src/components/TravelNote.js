@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     },
     card: {
         display: 'flex',
-        minHeight: '30vh'
+        height: '30vh'
     },
     image: {
         width: '40%',
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
     spacing: {
         marginRight: theme.spacing(4),
+        marginLeft: theme.spacing(1),
     }
 }));
 
@@ -46,7 +47,7 @@ export default function TravelNote({ title, description, image, country, city, s
                         <RoomIcon />
                         <Typography variant="body2" className={classes.spacing}>{country && city ? `${country} ${city}` : "国名 都市名"}</Typography>
                         <CalendarTodayIcon />
-                        <Typography variant="body2" className={classes.spacing}>{start_date && end_date ? `${start_date} ${end_date}` : "start end"}</Typography>
+                        <Typography variant="body2" className={classes.spacing}>{start_date && end_date ? `${start_date} ~ ${end_date}` : "start end"}</Typography>
                     </Grid>
                 </Grid>
             </Card>
