@@ -89,19 +89,6 @@ export default function Nav(props) {
             </Link>
           </Typography>
           <div className={classes.rightContent}>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="旅行記の検索"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
             <Link className={classes.navLink} to="/CreateTravelNote">
               <Button className={classes.navButton} startIcon={<EditIcon />}>
                 旅行記作成

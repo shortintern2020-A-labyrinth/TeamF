@@ -69,8 +69,8 @@ def user_detail(user_id):
       image_path = tn.image_path
       image = load_image(image_path)
       obj["image"] = image
-      travel_notes.append(obj)
       '''
+      travel_notes.append(obj)
   except Exception as e:
     logger.warn(e)
     raise e

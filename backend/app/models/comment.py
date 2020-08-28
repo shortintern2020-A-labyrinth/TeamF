@@ -1,6 +1,7 @@
 # shintaro ichikawa
 from ..database import db
 
+from datetime import datetime, timedelta, timezone
 
 class Comment(db.Model):
   __tablename__ = 'comments'
@@ -24,3 +25,6 @@ class Comment(db.Model):
     self.body = body
     self.created_by = created_by
     self.modified_by = modified_by
+    JST = timezone(timedelta(hours=+9), 'JST')
+    self.created_date = datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')
+    self.modified_date = datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')
