@@ -1,5 +1,5 @@
 # 楽天 二子玉川夏の陣 2020 A日程 チームお研究パンダ
-
+![Backend Tests](https://github.com/shortintern2020-A-labyrinth/TeamF/workflows/Backend%20Tests/badge.svg)
 ## セットアップ
 ```
 docker-compose build

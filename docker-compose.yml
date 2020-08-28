@@ -1,3 +1,5 @@
+# Makoto Naruse
+
 version: '3'
 services:
   frontend:
@@ -26,13 +28,17 @@ services:
       - "./backend/:/app"
     environment:
       APP_DATABASE_HOST: db
+      TEST_DATABASE_HOST: test_db
       APP_DATABASE_NAME: travel-notes
       APP_DATABASE_USER: root
       APP_DATABASE_PASSWORD: root
+      RAKUTEN_APPLICATION_ID: "1048314173959090169"
+      FLASK_ENV: development
       TZ: Asia/Tokyo
-    command: flask run --host 0.0.0.0 --port 4000
+    command: sh -c "./wait-for-it.sh db:3306 -- ./start.sh"
     depends_on:
       - db
+      - test_db
 
   # MySQL
   db:
@@ -49,3 +55,18 @@ services:
       - "./db/my.cnf:/etc/mysql/conf.d/my.cnf"
     ports:
       - "3306:3306"
+
+  test_db:
+    image: mysql:5.7
+    container_name: "mysql-test"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: travel-notes
+      MYSQL_PASSWORD: root
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - "./db/test_data:/var/lib/mysql"
+      - "./db/my.cnf:/etc/mysql/conf.d/my.cnf"
+    ports:
+      - "3307:3306"
